@@ -62,9 +62,29 @@ def new_data_structs():
     manera vacía para posteriormente almacenar la información.
     """
     #TODO: Inicializar las estructuras de datos
+    analyzer={
+            'aeropuertos_distancias'= gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=430,
+                                              cmpfunction=)
+            'aeropuertos'= mp.newMap(numelements=430,
+                                     maptype='PROBING',
+                                     cmpfunction=)
+            'vuelos_grafo'= gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=430,
+                                              cmpfunction=)
+            'vuelos_mapa'= mp.newMap(numelements=3021,
+                                     maptype='PROBING',
+                                     cmpfunction=)
+            
+        
+    }
+    return analyzer
     pass
 
-
+def addAirports(analyzer):
+    mp.put(analyzer['aeropuertos_distancias'], id, )
 # Funciones para agregar informacion al modelo
 
 def add_data(data_structs, data):
