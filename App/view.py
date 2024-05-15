@@ -51,14 +51,14 @@ def new_controller():
 def print_menu():
     print("Bienvenido")
     print("1- Cargar información")
-    print("2- Ejecutar Requerimiento 1")
-    print("3- Ejecutar Requerimiento 2")
-    print("4- Ejecutar Requerimiento 3")
-    print("5- Ejecutar Requerimiento 4")
-    print("6- Ejecutar Requerimiento 5")
-    print("7- Ejecutar Requerimiento 6")
-    print("8- Ejecutar Requerimiento 7")
-    print("9- Ejecutar Requerimiento 8")
+    print("2-  Identificar si hay una ruta entre dos destinos turísticos")
+    print("3- Identificar el itinerario con menos escalas entre dosdestinos turísticos")
+    print("4- Determinar la red de trayectos comerciales decobertura máxima desde el aeropuerto con mayor concurrencia")
+    print("5- Determinar la red de trayectos de carga de distanciamínima partiendo del aeropuerto con mayor concurrencia")
+    print("6- Determinar la red de respuesta militar de menortiempo partiendo desde el aeropuerto con mayor importancia militar")
+    print("7-  Obtener los caminos más cortos para la cobertura delos M aeropuertos más importantes del país ")
+    print("8- Obtener el camino más corto en tiempo para llegarentre dos puntos turísticos")
+    print("9- Graficar los resultados para cada uno de los requerimientos")
     print("0- Salir")
 
 
