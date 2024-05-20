@@ -40,12 +40,7 @@ operación solicitada
 """
 
 
-def new_controller():
-    """
-        Se crea una instancia del controlador
-    """
-    #TODO: Llamar la función del controlador donde se crean las estructuras de datos
-    pass
+
 
 
 def print_menu():
@@ -60,15 +55,58 @@ def print_menu():
     print("8- Obtener el camino más corto en tiempo para llegarentre dos puntos turísticos")
     print("9- Graficar los resultados para cada uno de los requerimientos")
     print("0- Salir")
+    
 
 
-def load_data(control):
+
+        
+def load_data(control, vuelos, aeropuertos):
     """
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    pass
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar=controller.load(control, vuelos, aeropuertos)
+   
+    headers= {'Nombre del aeropuerto:':[],
+                'Identificador ICAO del aeropuerto:':[],
+                'Ciudad del aeropuerto:':[],
+                'Concurrencia comercial:':[]}
+    
+    p5_comercial= listas_comercial[0]
+    p5_com_headers= headers.copy()
+    u5_comercial= listas_comercial[1]
+    u5_com_headers= headers.copy()
 
+    p5_carga= listas_carga[0]
+    p5_carga_headers= headers.copy()
+    u5_carga= listas_carga[1]
+    u5_carga_headers= headers.copy()
+
+    p5_militar= listas_militar[0]
+    p5_mil_headers= headers.copy()
+    u5_militar= listas_militar[1]
+    u5_mil_headers= headers.copy()
+
+    rellenar_headers(p5_com_headers, p5_comercial)
+    rellenar_headers(u5_com_headers, u5_comercial)
+    rellenar_headers(p5_carga_headers, p5_carga)
+    rellenar_headers(u5_carga_headers, u5_carga)
+    rellenar_headers(p5_mil_headers, p5_militar)
+    rellenar_headers(u5_mil_headers, u5_militar)
+    return total_aeropuertos_cargados, total_vuelos_cargados, p5_com_headers, u5_com_headers, p5_carga_headers, u5_carga_headers, p5_mil_headers, u5_mil_headers
+    
+def rellenar_headers(headers, lista):
+    for i in lt.iterator(lista):
+        headers['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers['Concurrencia comercial:'].append(i['Concurrencia comercial'])
+
+       
+       
+    
+    
+   
 
 def print_data(control, id):
     """
@@ -142,7 +180,6 @@ def print_req_8(control):
 
 
 # Se crea el controlador asociado a la vista
-control = new_controller()
 
 # main del reto
 if __name__ == "__main__":
@@ -151,12 +188,35 @@ if __name__ == "__main__":
     """
     working = True
     #ciclo del menu
+    control = controller.new_controller()
     while working:
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
             print("Cargando información de los archivos ....\n")
-            data = load_data(control)
+            aeropuertos= 'airports-2022.csv'
+            vuelos='fligths-2022.csv'
+            total_aeropuertos_cargados, total_vuelos_cargados, p5_com_headers, u5_com_headers, p5_carga_headers, u5_carga_headers, p5_mil_headers, u5_mil_headers=load_data(control, aeropuertos, vuelos)
+            print('El total de aeropuertos cargados es:')
+            print(total_aeropuertos_cargados)
+            print('El total de vuelos cargados es:')
+            print(total_vuelos_cargados)
+            print('Los primeros 5 aeropuertos con mayor numero de concurrencia comercial son:')
+            print(tabulate(p5_com_headers,headers='keys', tablefmt='simple_grid'))
+            print('Los últimos 5 aeropuertos con mayor numero de concurrencia comercial son:')
+            print(tabulate(u5_com_headers,headers='keys', tablefmt='simple_grid'))
+            print('Los primeros 5 aeropuertos con mayor numero de concurrencia de carga son:')
+            print(tabulate(p5_carga_headers,headers='keys', tablefmt='simple_grid'))
+            print('Los últimos 5 aeropuertos con mayor numero de concurrencia de carga son:')
+            print(tabulate(u5_carga_headers,headers='keys', tablefmt='simple_grid'))            
+            print('Los primeros 5 aeropuertos con mayor numero de concurrencia militar son:')
+            print(tabulate(p5_mil_headers,headers='keys', tablefmt='simple_grid'))                       
+            print('Los últimos 5 aeropuertos con mayor numero de concurrencia de militar son:')
+            print(tabulate(u5_mil_headers,headers='keys', tablefmt='simple_grid'))                       
+            
+            
+
+
         elif int(inputs) == 2:
             print_req_1(control)
 

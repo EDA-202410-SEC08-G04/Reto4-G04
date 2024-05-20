@@ -36,19 +36,36 @@ def new_controller():
     Crea una instancia del modelo
     """
     #TODO: Llamar la función del modelo que crea las estructuras de datos
-    pass
+    analyzer=model.new_data_structs()
+    return analyzer
 
 
 # Funciones para la carga de datos
 
-def load_data(control, filename):
+def load_aeropuertos(analyzer, aeropuertos):
     """
     Carga los datos del reto
     """
     # TODO: Realizar la carga de datos
-    pass
+    file_aeropuertos=cf.data_dir + 'data/' + aeropuertos
+    input_file_2 = csv.DictReader(open(file_aeropuertos, encoding="utf-8"),
+                                delimiter=";")
+    for aeropuerto in input_file_2:
+        model.add_aeropuerto(analyzer, aeropuerto)
 
 
+def load_vuelos(analyzer, vuelos):
+    file_vuelos=cf.data_dir + 'data/' + vuelos
+    input_file_1 = csv.DictReader(open(file_vuelos, encoding="utf-8"),
+                                delimiter=";")
+    for vuelo in input_file_1:
+         model.carga_grafos_mapa_vuelos(analyzer, vuelo)
+
+def load(analyzer, aeropuertos, vuelos):
+    aeropuertos= load_aeropuertos(analyzer, aeropuertos)
+    vuelos= load_vuelos(analyzer, vuelos)
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar= model.reporte_de_Carga(analyzer)
+    return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
 # Funciones de ordenamiento
 
 def sort(control):

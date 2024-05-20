@@ -75,7 +75,7 @@ def new_data_structs():
                                               size=430,
                                              ),
                                     
-            'aviacion_carga__tiempo': gr.newGraph(datastructure='ADJ_LIST',
+            'aviacion_carga_tiempo': gr.newGraph(datastructure='ADJ_LIST',
                                               directed=True,
                                               size=430,
                                               ),
@@ -104,7 +104,6 @@ def new_data_structs():
         
     }
     return analyzer
-    pass
 
 def add_aeropuerto(analyzer, aeropuerto):
     #función que crea un mapa con los aeropuertos
@@ -117,7 +116,7 @@ def carga_grafos_mapa_vuelos(analyzer, vuelos):
     grafo_carga_d= analyzer['aviacion_carga_distancia']
     grafo_comercial_d= analyzer['aviacion_comercial_distancia']
     grafo_militar_d= analyzer['militar_distancia']
-    grafo_carga_t=analyzer['aviacion_carga_tiempo']
+    grafo_carga_t=analyzer['aviacion_carga_tiempo'] 
     grafo_comercial_t= analyzer['aviacion_comercial_tiempo']
     grafo_militar_t= analyzer['militar_tiempo']
     add_vertices(analyzer, vuelos, grafo_carga_d, 'distancia')
@@ -136,7 +135,7 @@ def add_vertices(analyzer, vuelos, grafo, tipo):
     contiene_o= gr.containsVertex(grafo_carga, origen)
     destino= vuelos['DESTINO']
     contiene_d= gr. containsVertex(grafo_carga, destino)
-    arco= gr.getEdge(grafo_carga, contiene_o,contiene_d)
+    arco= gr.getEdge(grafo_carga, origen,destino)
     mapa_aeropuertos= analyzer['aeropuertos_mapa']
     t=0
     if contiene_o:
@@ -162,12 +161,14 @@ def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
     #función que adiciona arcos, si es un grafo de distancia utiliza la fórmula Harvesine y si es de tiempol, solo extrae el tiempo del vuelo
     if tipo=='distancia':
         R=6372.8
-        datos_origen= mp.get(mapa_aeropuertos, origen)
-        datos_destino= mp.get(mapa_aeropuertos, destino)
-        lat_o= math.radians(datos_origen['LATITUD'])
-        lon_o= math.radians(datos_origen['LONGITUD'])
-        lat_d=  math.radians(datos_destino['LATITUD'])
-        lon_d=  math.radians(datos_destino['LONGITUD'])
+        pareja_origen= mp.get(mapa_aeropuertos, origen)
+        datos_origen=me.getValue(pareja_origen)
+        pareja_destino= mp.get(mapa_aeropuertos, destino)
+        datos_destino=me.getValue(pareja_destino)
+        lat_o= math.radians(float((datos_origen['LATITUD']).replace(',', '.')))
+        lon_o= math.radians(float((datos_origen['LONGITUD']).replace(',', '.')))
+        lat_d=  math.radians(float((datos_destino['LATITUD']).replace(',', '.')))
+        lon_d=  math.radians(float((datos_destino['LONGITUD']).replace(',', '.')))
         dlat = lat_o - lat_d
         dlon = lon_o - lon_d
         a = math.sin(dlat / 2)**2 + math.cos(lat_o) * math.cos(lat_d) * math.sin(dlon / 2)**2
@@ -189,9 +190,63 @@ def formato_id(vuelos):
     nombre= vuelos['ORIGEN']
     nombre= nombre +'/' + vuelos['DESTINO']
     return nombre
-    
-    
 
+def reporte_de_Carga(analyzer):
+    aeropuertos_cargados= analyzer['aeropuertos_mapa']
+    total_aeropuertos_cargados= lt.size(mp.keySet(aeropuertos_cargados))
+    vuelos_cargados= analyzer['vuelos']
+    total_vuelos_cargados= lt.size(mp.keySet(vuelos_cargados))
+    arbol_comercial= analyzer['aviacion_comercial_distancia']
+    arbol_carga= analyzer['aviacion_carga_distancia']
+    arbol_militar= analyzer['militar_distancia']
+    listas_comercial=listas(arbol_comercial, aeropuertos_cargados)
+    listas_carga=listas(arbol_carga, aeropuertos_cargados)
+    listas_militar=listas(arbol_militar, aeropuertos_cargados)
+    return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
+
+def listas(arbol, aeropuertos_cargados):
+    lista_vertices= gr.vertices(arbol)
+    lista_orden= lt.newList('ARRAY_LIST', cmpfunction=degrees_cmp)
+    for i in lt.iterator(lista_vertices):
+        elementos= i + '/' + str(gr.degree(arbol, i))
+        lt.addLast(lista_orden, elementos)
+    lista_primeros= lt.subList(lista_orden, 1, 5)
+    lista_ultimos= lt.subList(lista_orden, lt.size(lista_orden)-5, 5)
+    lt_primeros= lt.newList('ARRAY_LIST')
+    lt_ultimos= lt.newList('ARRAY_LIST')
+    for i in lt.iterator(lista_primeros):
+        command= i.split('/')
+        key= command[0]
+        pareja=  mp.get(aeropuertos_cargados, key)
+        valor=me.getValue(pareja)
+        valor['Concurrencia comercial']= command[1]
+        lt.addLast(lt_primeros, valor)
+    for i in lt.iterator(lista_ultimos):
+        command= i.split('/')
+        key= command[0]
+        pareja=  mp.get(aeropuertos_cargados, key)
+        valor=me.getValue(pareja)
+        valor['Concurrencia comercial']= command[1]
+        lt.addLast(lt_ultimos, valor)
+    return [lt_primeros, lt_ultimos]
+
+def degrees_cmp(dato1, dato2):
+    ver1= dato1.split('/')
+    vertice1= int(ver1[1])
+    vertice_name1= int(ver1[0])
+    ver2= dato2.split('/')
+    vertice2= int(ver2[1])
+    vertice_name2= int(ver2[0])
+    if vertice1==vertice2:
+        if vertice_name1<vertice_name2:
+            return -1
+        else:
+            return 1
+    elif vertice1<vertice2:
+        return -1
+    else:
+        return 1
+    
 
 
 # Funciones para agregar informacion al modelo
