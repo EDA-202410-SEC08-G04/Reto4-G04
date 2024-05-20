@@ -47,6 +47,7 @@ from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
 assert cf
+import math
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá
@@ -63,28 +64,136 @@ def new_data_structs():
     """
     #TODO: Inicializar las estructuras de datos
     analyzer={
-            'aeropuertos_distancias'= gr.newGraph(datastructure='ADJ_LIST',
+            'vuelos':mp.newMap(numelements=430
+                                    ,
+                                                maptype='PROBING'),
+            'aeropuertos_mapa':mp.newMap(numelements=430
+                                    ,
+                                                maptype='PROBING'),
+            'aviacion_carga_distancia': gr.newGraph(datastructure='ADJ_LIST',
                                               directed=True,
                                               size=430,
-                                              cmpfunction=)
-            'aeropuertos'= mp.newMap(numelements=430,
-                                     maptype='PROBING',
-                                     cmpfunction=)
-            'vuelos_grafo'= gr.newGraph(datastructure='ADJ_LIST',
+                                             ),
+                                    
+            'aviacion_carga__tiempo': gr.newGraph(datastructure='ADJ_LIST',
                                               directed=True,
                                               size=430,
-                                              cmpfunction=)
-            'vuelos_mapa'= mp.newMap(numelements=3021,
-                                     maptype='PROBING',
-                                     cmpfunction=)
-            
+                                              ),
+            'aviacion_comercial_distancia': gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=430,
+                                              ),
+            'aviacion_comercial_tiempo':  gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=430,
+                                              ),
+            'militar_distancia':  gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=430,
+                                              ),            'aviacion_comercial_tiempo':  gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=430,
+                                              ),
+            'militar_tiempo':  gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=430,
+                                              ),            'aviacion_comercial_tiempo':  gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=430,
+                                              ),
         
     }
     return analyzer
     pass
 
-def addAirports(analyzer):
-    mp.put(analyzer['aeropuertos_distancias'], id, )
+def add_aeropuerto(analyzer, aeropuerto):
+    #función que crea un mapa con los aeropuertos
+    aeropuertos_mapa= analyzer['aeropuertos_mapa']
+    id_aeropuerto= aeropuerto['ICAO']
+    mp.put(aeropuertos_mapa, id_aeropuerto, aeropuerto)
+    
+def carga_grafos_mapa_vuelos(analyzer, vuelos):
+    #función que carga todos los grafos y el mapa de vuelos
+    grafo_carga_d= analyzer['aviacion_carga_distancia']
+    grafo_comercial_d= analyzer['aviacion_comercial_distancia']
+    grafo_militar_d= analyzer['militar_distancia']
+    grafo_carga_t=analyzer['aviacion_carga_tiempo']
+    grafo_comercial_t= analyzer['aviacion_comercial_tiempo']
+    grafo_militar_t= analyzer['militar_tiempo']
+    add_vertices(analyzer, vuelos, grafo_carga_d, 'distancia')
+    add_vertices(analyzer, vuelos, grafo_comercial_d, 'distancia')
+    add_vertices(analyzer, vuelos, grafo_militar_d, 'distancia')
+    add_vertices(analyzer, vuelos, grafo_carga_t, 'tiempo')
+    add_vertices(analyzer, vuelos, grafo_comercial_t, 'tiempo')
+    add_vertices(analyzer, vuelos, grafo_militar_t, 'tiempo')
+    add_vuelo(analyzer, vuelos)
+    
+
+def add_vertices(analyzer, vuelos, grafo, tipo):
+    #función que adiciona vertices
+    grafo_carga=grafo
+    origen= vuelos['ORIGEN']
+    contiene_o= gr.containsVertex(grafo_carga, origen)
+    destino= vuelos['DESTINO']
+    contiene_d= gr. containsVertex(grafo_carga, destino)
+    arco= gr.getEdge(grafo_carga, contiene_o,contiene_d)
+    mapa_aeropuertos= analyzer['aeropuertos_mapa']
+    t=0
+    if contiene_o:
+        if contiene_d:
+            if arco != None:
+                t+=1
+            else:
+                gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
+                
+        else:
+            gr.insertVertex(grafo_carga, destino)
+            gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
+            
+    else:
+        gr.insertVertex(grafo_carga, origen)
+        if contiene_d:
+            gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
+        else:
+            gr.insertVertex(grafo_carga, destino)
+            gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
+            
+def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
+    #función que adiciona arcos, si es un grafo de distancia utiliza la fórmula Harvesine y si es de tiempol, solo extrae el tiempo del vuelo
+    if tipo=='distancia':
+        R=6372.8
+        datos_origen= mp.get(mapa_aeropuertos, origen)
+        datos_destino= mp.get(mapa_aeropuertos, destino)
+        lat_o= math.radians(datos_origen['LATITUD'])
+        lon_o= math.radians(datos_origen['LONGITUD'])
+        lat_d=  math.radians(datos_destino['LATITUD'])
+        lon_d=  math.radians(datos_destino['LONGITUD'])
+        dlat = lat_o - lat_d
+        dlon = lon_o - lon_d
+        a = math.sin(dlat / 2)**2 + math.cos(lat_o) * math.cos(lat_d) * math.sin(dlon / 2)**2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        distance = R * c
+        return distance
+    elif tipo=='tiempo':
+        tiempo= vuelos['TIEMPO_VUELO']
+        return tiempo
+         
+def add_vuelo(analyzer, vuelos):
+    #función que crea el mapa de vuelos
+    mapa_vuelos= analyzer['vuelos']
+    nombre_vuelo= formato_id(vuelos)
+    mp.put(mapa_vuelos, nombre_vuelo, vuelos)
+    
+def formato_id(vuelos):
+    #función que formatea los ids del mapa de vuelos 
+    nombre= vuelos['ORIGEN']
+    nombre= nombre +'/' + vuelos['DESTINO']
+    return nombre
+    
+    
+
+
+
 # Funciones para agregar informacion al modelo
 
 def add_data(data_structs, data):
