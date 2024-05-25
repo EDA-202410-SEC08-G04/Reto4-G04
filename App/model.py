@@ -192,6 +192,7 @@ def formato_id(vuelos):
     return nombre
 
 def reporte_de_Carga(analyzer):
+    #Función que recolecta toda la informacion que se requiere para la impresion de la carga
     aeropuertos_cargados= analyzer['aeropuertos_mapa']
     total_aeropuertos_cargados= lt.size(mp.keySet(aeropuertos_cargados))
     vuelos_cargados= analyzer['vuelos']
@@ -205,6 +206,7 @@ def reporte_de_Carga(analyzer):
     return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
 
 def listas(arbol, aeropuertos_cargados):
+    #Función que organiza por primeros 5 y últimos 5 
     lista_vertices= gr.vertices(arbol)
     lista_orden= lt.newList('ARRAY_LIST')
     for i in lt.iterator(lista_vertices):
@@ -232,6 +234,7 @@ def listas(arbol, aeropuertos_cargados):
     return [lt_primeros, lt_ultimos]
 
 def degrees_cmp(dato1, dato2):
+    #Función de comparación
     ver1 = dato1.split('/')
     vertice1 = int(ver1[1])
     vertice_name1 = ver1[0]
