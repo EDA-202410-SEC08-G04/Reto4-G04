@@ -248,45 +248,6 @@ def degrees_cmp(dato1, dato2):
         return vertice1 < vertice2 
 
 
-
-# Funciones para agregar informacion al modelo
-
-def add_data(data_structs, data):
-    """
-    Función para agregar nuevos elementos a la lista
-    """
-    #TODO: Crear la función para agregar elementos a una lista
-    pass
-
-
-# Funciones para creacion de datos
-
-def new_data(id, info):
-    """
-    Crea una nueva estructura para modelar los datos
-    """
-    #TODO: Crear la función para estructurar los datos
-    pass
-
-
-# Funciones de consulta
-
-def get_data(data_structs, id):
-    """
-    Retorna un dato a partir de su ID
-    """
-    #TODO: Crear la función para obtener un dato de una lista
-    pass
-
-
-def data_size(data_structs):
-    """
-    Retorna el tamaño de la lista de datos
-    """
-    #TODO: Crear la función para obtener el tamaño de una lista
-    pass
-
-
 def req_1(data_structs):
     """
     Función que soluciona el requerimiento 1
