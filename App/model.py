@@ -206,10 +206,11 @@ def reporte_de_Carga(analyzer):
 
 def listas(arbol, aeropuertos_cargados):
     lista_vertices= gr.vertices(arbol)
-    lista_orden= lt.newList('ARRAY_LIST', cmpfunction=degrees_cmp)
+    lista_orden= lt.newList('ARRAY_LIST')
     for i in lt.iterator(lista_vertices):
         elementos= i + '/' + str(gr.degree(arbol, i))
         lt.addLast(lista_orden, elementos)
+    merg.sort(lista_orden, degrees_cmp)
     lista_primeros= lt.subList(lista_orden, 1, 5)
     lista_ultimos= lt.subList(lista_orden, lt.size(lista_orden)-5, 5)
     lt_primeros= lt.newList('ARRAY_LIST')
@@ -231,22 +232,18 @@ def listas(arbol, aeropuertos_cargados):
     return [lt_primeros, lt_ultimos]
 
 def degrees_cmp(dato1, dato2):
-    ver1= dato1.split('/')
-    vertice1= int(ver1[1])
-    vertice_name1= int(ver1[0])
-    ver2= dato2.split('/')
-    vertice2= int(ver2[1])
-    vertice_name2= int(ver2[0])
-    if vertice1==vertice2:
-        if vertice_name1<vertice_name2:
-            return -1
-        else:
-            return 1
-    elif vertice1<vertice2:
-        return -1
+    ver1 = dato1.split('/')
+    vertice1 = int(ver1[1])
+    vertice_name1 = ver1[0]
+    ver2 = dato2.split('/')
+    vertice2 = int(ver2[1])
+    vertice_name2 = ver2[0]
+
+    if vertice1 == vertice2:
+        return vertice_name1 < vertice_name2  
     else:
-        return 1
-    
+        return vertice1 < vertice2 
+
 
 
 # Funciones para agregar informacion al modelo
