@@ -65,60 +65,102 @@ def load_data(control, vuelos, aeropuertos):
     Carga los datos
     """
     total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar = controller.load(control, vuelos, aeropuertos)
-
-    headers = {
+    print('El total de aeropeurtos cargados es:' + str(total_aeropuertos_cargados))
+    print('El total de vvuelos cargados es:' + str(total_vuelos_cargados))
+    headers_carga_p5 = {
+        'Nombre del aeropuerto:': [],
+        'Identificador ICAO del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'Concurrencia comercial:': []
+    }
+    headers_carga_u5 = {
         'Nombre del aeropuerto:': [],
         'Identificador ICAO del aeropuerto:': [],
         'Ciudad del aeropuerto:': [],
         'Concurrencia comercial:': []
     }
 
-    p5_comercial = listas_comercial[0]
-    p5_com_headers = headers.copy()
-    u5_comercial = listas_comercial[1]
-    u5_com_headers = headers.copy()
-
+    headers_comercial_p5 = {
+        'Nombre del aeropuerto:': [],
+        'Identificador ICAO del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'Concurrencia comercial:': []
+    }
+    headers_comercial_u5 = {
+        'Nombre del aeropuerto:': [],
+        'Identificador ICAO del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'Concurrencia comercial:': []
+    }
+    headers_militar_p5 = {
+        'Nombre del aeropuerto:': [],
+        'Identificador ICAO del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'Concurrencia comercial:': []
+    }
+    headers_militar_u5 = {
+        'Nombre del aeropuerto:': [],
+        'Identificador ICAO del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'Concurrencia comercial:': []
+    }
     p5_carga = listas_carga[0]
-    p5_carga_headers = headers.copy()
-    u5_carga = listas_carga[1]
-    u5_carga_headers = headers.copy()
+    u5_carga = listas_carga[1] 
+    for i in lt.iterator(p5_carga):
+        headers_carga_p5['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers_carga_p5['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers_carga_p5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers_carga_p5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
+    print('Los primeros 5 aeropuertos de carga con mayor concurrencia son:')
+    print(tabulate(headers_carga_p5, headers='keys', tablefmt='simple_grid'))
+    
+    for i in lt.iterator(u5_carga):
+        headers_carga_u5['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers_carga_u5['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers_carga_u5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers_carga_u5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
+    print('Los últimos 5 aeropuertos de carga con mayor concurrencia son:')   
+    print(tabulate(headers_carga_u5, headers='keys', tablefmt='simple_grid'))  
+    
+    p5_comercial = listas_comercial[0]
+    u5_comercial = listas_comercial[1]
+    for i in lt.iterator(p5_comercial):
+        headers_comercial_p5['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers_comercial_p5['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers_comercial_p5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers_comercial_p5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
+    print('Los primeros 5 aeropuertos comerciales con mayor concurrencia son:')   
+    print(tabulate(headers_carga_p5, headers='keys', tablefmt='simple_grid'))
+    
+    for i in lt.iterator(u5_comercial):
+        headers_comercial_u5['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers_comercial_u5['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers_comercial_u5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers_comercial_u5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
+    print('Los últimos 5 aeropuertos comerciales con mayor concurrencia son:')      
+    print(tabulate(headers_carga_u5, headers='keys', tablefmt='simple_grid'))  
 
     p5_militar = listas_militar[0]
-    p5_mil_headers = headers.copy()
     u5_militar = listas_militar[1]
-    u5_mil_headers = headers.copy()
 
-    rellenar_headers(p5_com_headers, p5_comercial)
-    rellenar_headers(u5_com_headers, u5_comercial)
-    rellenar_headers(p5_carga_headers, p5_carga)
-    rellenar_headers(u5_carga_headers, u5_carga)
-    rellenar_headers(p5_mil_headers, p5_militar)
-    rellenar_headers(u5_mil_headers, u5_militar)
-
-    return (total_aeropuertos_cargados, total_vuelos_cargados, p5_com_headers, u5_com_headers, 
-            p5_carga_headers, u5_carga_headers, p5_mil_headers, u5_mil_headers)
-
-def rellenar_headers(headers, lista):
-    for i in lt.iterator(lista):
-        headers['Nombre del aeropuerto:'].append(i['NOMBRE'])
-        headers['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
-        headers['Ciudad del aeropuerto:'].append(i['CIUDAD'])
-        headers['Concurrencia comercial:'].append(i['Concurrencia comercial'])
-
-def imprimir_tablas(headers, titulo_primeros, titulo_ultimos):
-    # Obtener las primeras y últimas 5 filas
-    primeras_filas = {key: headers[key][:5] for key in headers}
-    ultimas_filas = {key: headers[key][-5:] for key in headers}
-
-    # Imprimir las primeras 5 filas
-    print(titulo_primeros)
-    print(tabulate(primeras_filas, headers='keys', tablefmt='simple_grid'))
-
-    # Imprimir las últimas 5 filas
-    print(titulo_ultimos)
-    print(tabulate(ultimas_filas, headers='keys', tablefmt='simple_grid'))
-       
+    for i in lt.iterator(p5_militar):
+        headers_militar_p5['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers_militar_p5['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers_militar_p5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers_militar_p5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
+    print('Los primeros 5 aeropuertos militares con mayor concurrencia son:')       
+    print(tabulate(headers_militar_p5, headers='keys', tablefmt='simple_grid'))
     
+    for i in lt.iterator(u5_militar):
+        headers_militar_u5['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers_militar_u5['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers_militar_u5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers_militar_u5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
+    print('Los últimos 5 aeropuertos militares con mayor concurrencia son:')      
+    print(tabulate(headers_militar_u5, headers='keys', tablefmt='simple_grid')) 
+
+
+
 
 def print_data(control, id):
     """
