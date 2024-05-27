@@ -135,12 +135,12 @@ def print_req_1(control):
     pass
 
 
-def print_req_2(control):
+def print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    controller.req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
 
 
 def print_req_3(control):
@@ -164,7 +164,7 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    controller.req_5(control)
 
 
 def print_req_6(control):
@@ -222,9 +222,17 @@ if __name__ == "__main__":
 
         elif int(inputs) == 2:
             print_req_1(control)
+            
 
         elif int(inputs) == 3:
-            print_req_2(control)
+            
+            input_lat_origen = input("Ingrese la latitud del lugar origen: ")
+            input_long_origen = input("Ingrese la longitud del lugar origen: ")
+            input_lat_destino = input("Ingrese la latitud del lugar destino: ")
+            input_long_destino = input("Ingrese la longitud del lugar destino: ")
+            
+            
+            print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
 
         elif int(inputs) == 4:
             print_req_3(control)

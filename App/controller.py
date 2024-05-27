@@ -94,12 +94,12 @@ def req_1(control):
     pass
 
 
-def req_2(control):
+def req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino):
     """
     Retorna el resultado del requerimiento 2
     """
     # TODO: Modificar el requerimiento 2
-    pass
+    model.req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
 
 
 def req_3(control):
@@ -123,7 +123,7 @@ def req_5(control):
     Retorna el resultado del requerimiento 5
     """
     # TODO: Modificar el requerimiento 5
-    pass
+    model.req_5(control)
 
 def req_6(control):
     """

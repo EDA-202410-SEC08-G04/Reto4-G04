@@ -295,12 +295,54 @@ def req_1(data_structs):
     pass
 
 
-def req_2(data_structs):
+def haversine(lat1, lon1, lat2, lon2):
+    R=6372.8
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    lat1 = math.radians(lat1)
+    lat2 = math.radians(lat2)
+    a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distancia = R* c
+    return distancia
+
+def compare_harvesine_distance(dic1, dic2):
+    key1 = next(iter(dic1))
+    key2 = next(iter(dic2))
+    if key1 < key2:
+        return True
+    else:
+        return False
+    
+def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino):
     """
     Función que soluciona el requerimiento 2
     """
     # TODO: Realizar el requerimiento 2
-    pass
+    grafo_comercial_dis = data_structs['aviacion_comercial_distancia']
+    print('GRAFOOOOOOOOOO', grafo_comercial_dis)
+    tam = gr.numVertices(grafo_comercial_dis)
+    print ("VVV", tam)
+    mapa_aeropuertos = data_structs['aeropuertos_mapa']
+    valores_aeropuerto = mp.valueSet(mapa_aeropuertos)
+    input_lat_origen = float(input_lat_origen.replace(',', '.'))
+    input_long_origen = float(input_long_origen.replace(',', '.'))
+    lista_dis_origen = lt.newList('ARRAY_LIST')
+    for linea in lt.iterator(valores_aeropuerto):
+        latitud = linea['LATITUD']
+        latitud = float(latitud.replace(',', '.'))
+        longitud = linea['LONGITUD']
+        longitud = float(longitud.replace(',', '.'))
+        calculo_harvesine_origen = haversine(latitud, longitud, input_lat_origen, input_long_origen)
+        #print("LATT", latitud, "LONNN", longitud, "CALCULOOO", calculo_harvesine_origen)
+        diccionario = {calculo_harvesine_origen: linea}
+        lt.addLast(lista_dis_origen, diccionario)
+    #print ("LISTAAA", lista_dis_origen)   
+    merg.sort(lista_dis_origen, compare_harvesine_distance)
+    
+        
+
+    
 
 
 def req_3(data_structs):
@@ -319,12 +361,14 @@ def req_4(data_structs):
     pass
 
 
+
 def req_5(data_structs):
     """
     Función que soluciona el requerimiento 5
     """
     # TODO: Realizar el requerimiento 5
-    pass
+    print (data_structs['aviacion_carga_distancia'])
+    
 
 
 def req_6(data_structs):
