@@ -288,26 +288,36 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
     """
     # TODO: Realizar el requerimiento 2
     grafo_comercial_dis = data_structs['aviacion_comercial_distancia']
-    print('GRAFOOOOOOOOOO', grafo_comercial_dis)
-    tam = gr.numVertices(grafo_comercial_dis)
-    print ("VVV", tam)
+    vertices_comerciales = gr.vertices(grafo_comercial_dis)
     mapa_aeropuertos = data_structs['aeropuertos_mapa']
-    valores_aeropuerto = mp.valueSet(mapa_aeropuertos)
     input_lat_origen = float(input_lat_origen.replace(',', '.'))
     input_long_origen = float(input_long_origen.replace(',', '.'))
+    input_lat_destino = float(input_lat_destino.replace(',', '.'))
+    input_long_destino = float(input_long_destino.replace(',', '.'))
     lista_dis_origen = lt.newList('ARRAY_LIST')
-    for linea in lt.iterator(valores_aeropuerto):
-        latitud = linea['LATITUD']
+    lista_dis_destino = lt.newList('ARRAY_LIST')
+    
+    for vertice in lt.iterator(vertices_comerciales):
+        valor_id_aeropuerto = me.getValue(mp.get(mapa_aeropuertos, vertice))
+        latitud = valor_id_aeropuerto['LATITUD']
         latitud = float(latitud.replace(',', '.'))
-        longitud = linea['LONGITUD']
+        longitud = valor_id_aeropuerto['LONGITUD']
         longitud = float(longitud.replace(',', '.'))
         calculo_harvesine_origen = haversine(latitud, longitud, input_lat_origen, input_long_origen)
+        calculo_harvesine_destino = haversine(latitud, longitud, input_lat_destino, input_long_destino)
         #print("LATT", latitud, "LONNN", longitud, "CALCULOOO", calculo_harvesine_origen)
-        diccionario = {calculo_harvesine_origen: linea}
-        lt.addLast(lista_dis_origen, diccionario)
+        diccionario_o = {calculo_harvesine_origen: valor_id_aeropuerto}
+        diccionario_d = {calculo_harvesine_destino: valor_id_aeropuerto}
+        lt.addLast(lista_dis_origen, diccionario_o)
+        lt.addLast(lista_dis_destino, diccionario_d)
     #print ("LISTAAA", lista_dis_origen)   
     merg.sort(lista_dis_origen, compare_harvesine_distance)
+    merg.sort(lista_dis_destino, compare_harvesine_distance)
+    aeropuerto_inicial = lt.firstElement(lista_dis_origen)
+    aeropuerto_final = lt.firstElement(lista_dis_destino)
     
+    print ("AERO INICIAL", aeropuerto_inicial)
+    print ("AERO FINALL", aeropuerto_final)
         
 
     
