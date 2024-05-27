@@ -30,7 +30,6 @@ import tracemalloc
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-
 def new_controller():
     """
     Crea una instancia del modelo
