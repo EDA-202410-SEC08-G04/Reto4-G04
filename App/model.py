@@ -316,6 +316,17 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
     aeropuerto_inicial = lt.firstElement(lista_dis_origen)
     aeropuerto_final = lt.firstElement(lista_dis_destino)
     
+    llave_aer_inicial = next(iter(aeropuerto_inicial))
+    llave_aer_final = next(iter(aeropuerto_final))
+    valor_aer_inicial = aeropuerto_inicial[llave_aer_inicial]
+    valor_aer_final = aeropuerto_final[llave_aer_final]
+
+    if llave_aer_inicial > 30 or llave_aer_final > 30:
+        nombre_aer_inicial = valor_aer_inicial['NOMBRE']
+        nombre_aer_final = valor_aer_final['NOMBRE']
+        print ("No  se  ejecutó la  búsqueda ya que la distancia entre lo ingresado y los aeropuertos, supera los 30km. Sin embargo, el aeropuerto origen más cercano es: ", nombre_aer_inicial, " con una distancia de: ", llave_aer_inicial, " desde el punto ingresado. Y el aeropuerto destino más cercano es: ", nombre_aer_final, " con una distancia de: ", llave_aer_final, " desde el punto ingresado.")
+        
+        
     print ("AERO INICIAL", aeropuerto_inicial)
     print ("AERO FINALL", aeropuerto_final)
         
