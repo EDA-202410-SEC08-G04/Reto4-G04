@@ -119,12 +119,18 @@ def carga_grafos_mapa_vuelos(analyzer, vuelos):
     grafo_carga_t=analyzer['aviacion_carga_tiempo'] 
     grafo_comercial_t= analyzer['aviacion_comercial_tiempo']
     grafo_militar_t= analyzer['militar_tiempo']
-    add_vertices(analyzer, vuelos, grafo_carga_d, 'distancia')
-    add_vertices(analyzer, vuelos, grafo_comercial_d, 'distancia')
-    add_vertices(analyzer, vuelos, grafo_militar_d, 'distancia')
-    add_vertices(analyzer, vuelos, grafo_carga_t, 'tiempo')
-    add_vertices(analyzer, vuelos, grafo_comercial_t, 'tiempo')
-    add_vertices(analyzer, vuelos, grafo_militar_t, 'tiempo')
+    tipo_vuelo= vuelos['TIPO_VUELO']
+    if tipo_vuelo=='AVIACION_CARGA':
+       add_vertices(analyzer, vuelos, grafo_carga_t, 'tiempo')
+       add_vertices(analyzer, vuelos, grafo_carga_d, 'distancia')
+       
+    elif tipo_vuelo=='AVIACION_COMERCIAL':
+       add_vertices(analyzer, vuelos, grafo_comercial_d, 'distancia')
+       add_vertices(analyzer, vuelos, grafo_comercial_t, 'tiempo')
+       
+    elif tipo_vuelo=='MILITAR':
+      add_vertices(analyzer, vuelos, grafo_militar_d, 'distancia')
+      add_vertices(analyzer, vuelos, grafo_militar_t, 'tiempo')
     add_vuelo(analyzer, vuelos)
     
 
@@ -144,11 +150,11 @@ def add_vertices(analyzer, vuelos, grafo, tipo):
                 t+=1
             else:
                 gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
-                
+                    
         else:
             gr.insertVertex(grafo_carga, destino)
             gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
-            
+                
     else:
         gr.insertVertex(grafo_carga, origen)
         if contiene_d:
@@ -156,6 +162,7 @@ def add_vertices(analyzer, vuelos, grafo, tipo):
         else:
             gr.insertVertex(grafo_carga, destino)
             gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
+
             
 def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
     #función que adiciona arcos, si es un grafo de distancia utiliza la fórmula Harvesine y si es de tiempol, solo extrae el tiempo del vuelo
@@ -248,7 +255,8 @@ def degrees_cmp(dato1, dato2):
         return vertice1 < vertice2 
 
 
-def req_1(data_structs):
+def req_1(analyzer, punto_origen, punto_destino):
+    
     """
     Función que soluciona el requerimiento 1
     """
