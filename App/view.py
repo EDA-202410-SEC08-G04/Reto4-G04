@@ -250,15 +250,7 @@ if __name__ == "__main__":
             print("Cargando información de los archivos ....\n")
             aeropuertos= 'airports-2022.csv'
             vuelos='fligths-2022.csv'
-            total_aeropuertos_cargados, total_vuelos_cargados, p5_com_headers, u5_com_headers, p5_carga_headers, u5_carga_headers, p5_mil_headers, u5_mil_headers=load_data(control, aeropuertos, vuelos)
-            print('El total de aeropuertos cargados es:')
-            print(total_aeropuertos_cargados)
-            print('El total de vuelos cargados es:')
-            print(total_vuelos_cargados)
-            imprimir_tablas(p5_com_headers, "Los primeros 5 aeropuertos comerciales con mayor concurrencia son:", "Los últimos 5 aeropuertos comerciales con mayor concurrencia son:")
-            imprimir_tablas(p5_carga_headers, "Los primeros 5 aeropuertos de carga con mayor concurrencia son:", "Los últimos 5 aeropuertos de carga con mayor concurrencia son:")
-            imprimir_tablas(p5_mil_headers, "Los primeros 5 aeropuertos militares con mayor concurrencia son:", "Los últimos 5 aeropuertos militares con mayor concurrencia son:")
-
+            load_data(control, aeropuertos, vuelos)
             
 
 
