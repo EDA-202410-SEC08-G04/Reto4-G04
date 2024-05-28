@@ -368,14 +368,44 @@ def req_4(data_structs):
     # TODO: Realizar el requerimiento 4
     pass
 
-
+def comparacion_arbol(aero1, aero2):
+    #ordena de mayor a menor
+    concurrencia1, icao1 = aero1
+    concurrencia2, icao2 = aero2
+    if concurrencia1 > concurrencia2:
+        return 1
+    elif concurrencia1 < concurrencia2:
+        return -1
+    else:
+        if icao1 < icao2:
+            return 1
+        elif icao1 > icao2:
+            return -1
+        else:
+            return 0
 
 def req_5(data_structs):
     """
     Función que soluciona el requerimiento 5
     """
     # TODO: Realizar el requerimiento 5
-    print (data_structs['aviacion_carga_distancia'])
+    mapa_aeropuertos = data_structs['aeropuertos_mapa']
+    grafo_militar_dis = data_structs['militar_distancia']
+    grafo_militar_tiempo = data_structs['militar_tiempo']
+    
+    # aeropuerto con mayor importancia militar (concurrencia)
+    vertices_militares = gr.vertices(grafo_militar_dis)
+    arbol_militar = om.newMap(cmpfunction=comparacion_arbol)
+    for aeropuerto in lt.iterator(vertices_militares):
+        num_salen = int(gr.outdegree(grafo_militar_dis, aeropuerto))
+        num_llegan = int(gr.indegree(grafo_militar_dis, aeropuerto))
+        grado_total = num_salen + num_llegan
+        info = me.getValue(mp.get(mapa_aeropuertos, aeropuerto))
+        info["concurrencia"] = grado_total
+        om.put(arbol_militar, (grado_total, aeropuerto), info)
+    aeropuerto_mayor = om.maxKey(arbol_militar)
+    print ("AEROPUERTO MAYOR", aeropuerto_mayor)
+    
     
 
 
