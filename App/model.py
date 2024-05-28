@@ -162,7 +162,6 @@ def add_vertices(analyzer, vuelos, grafo, tipo):
         else:
             gr.insertVertex(grafo_carga, destino)
             gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
-
             
 def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
     #función que adiciona arcos, si es un grafo de distancia utiliza la fórmula Harvesine y si es de tiempol, solo extrae el tiempo del vuelo

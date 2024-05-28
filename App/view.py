@@ -64,7 +64,8 @@ def load_data(control, vuelos, aeropuertos):
     """
     Carga los datos
     """
-    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar = controller.load(control, vuelos, aeropuertos)
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar, tiempo_total = controller.load(control, vuelos, aeropuertos)
+    print ("El tiempo que se demora la carga de datos es: ", tiempo_total, " milisegundos")
     print('El total de aeropeurtos cargados es:' + str(total_aeropuertos_cargados))
     print('El total de vvuelos cargados es:' + str(total_vuelos_cargados))
     headers_carga_p5 = {
