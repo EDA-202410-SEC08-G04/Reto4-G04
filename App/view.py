@@ -64,8 +64,7 @@ def load_data(control, vuelos, aeropuertos):
     """
     Carga los datos
     """
-
-    total_aeropuertos_cargados, total_vuelos_cargados, listas_carga, listas_comercial, listas_militar = controller.load(control, vuelos, aeropuertos)
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar = controller.load(control, vuelos, aeropuertos)
     print('El total de aeropeurtos cargados es:' + str(total_aeropuertos_cargados))
     print('El total de vvuelos cargados es:' + str(total_vuelos_cargados))
     headers_carga_p5 = {
@@ -131,7 +130,7 @@ def load_data(control, vuelos, aeropuertos):
         headers_comercial_p5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
         headers_comercial_p5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
     print('Los primeros 5 aeropuertos comerciales con mayor concurrencia son:')   
-    print(tabulate(headers_comercial_p5, headers='keys', tablefmt='simple_grid'))
+    print(tabulate(headers_carga_p5, headers='keys', tablefmt='simple_grid'))
     
     for i in lt.iterator(u5_comercial):
         headers_comercial_u5['Nombre del aeropuerto:'].append(i['NOMBRE'])
@@ -139,7 +138,7 @@ def load_data(control, vuelos, aeropuertos):
         headers_comercial_u5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
         headers_comercial_u5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
     print('Los últimos 5 aeropuertos comerciales con mayor concurrencia son:')      
-    print(tabulate(headers_comercial_u5, headers='keys', tablefmt='simple_grid'))  
+    print(tabulate(headers_carga_u5, headers='keys', tablefmt='simple_grid'))  
 
     p5_militar = listas_militar[0]
     u5_militar = listas_militar[1]
@@ -163,10 +162,6 @@ def load_data(control, vuelos, aeropuertos):
 
 
 
-
-       
-    
-
 def print_data(control, id):
     """
         Función que imprime un dato dado su ID
@@ -182,13 +177,28 @@ def print_req_1(control):
     pass
 
 
-def print_req_2(control):
+def print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 2
-    pass
-
+    distancia_total, cant_aero_visitados, lista_final, tiempo_recorrido, tiempo_total = controller.req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
+    print ("La distancia total del camino entre el punto de origen y el de destino es: ", distancia_total)
+    print ("El número de aeropuertos que se visitan en el camino encontrado: ", cant_aero_visitados)
+    headers_req2 = {'Identificador ICAO del aeropuerto:': [],
+        'Nombre del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'País del aeropuerto:': []
+    }
+    for i in lt.iterator(lista_final):
+        headers_req2['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers_req2['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers_req2['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers_req2['País del aeropuerto:'].append(i['PAIS'])
+    print(tabulate(headers_req2, headers='keys', tablefmt='simple_grid'))
+    print ("Tiempo del trayecto total: ", tiempo_recorrido, " minutos")
+    
 
 def print_req_3(control):
     """
@@ -211,15 +221,68 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    pass
-
-
+    info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos, tiempo_total=controller.req_5(control)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
+    headers_aero_mayor = {'ICAO del aeropuerto de mayor importancia militar:': [],
+        'Nombre del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'País del aeropuerto:': [], 
+        'Concurrencia del aeropuerto:': []}
+    headers_aero_mayor['ICAO del aeropuerto de mayor importancia militar:'].append(info_aer_mayor['ICAO'])
+    headers_aero_mayor['Nombre del aeropuerto:'].append(info_aer_mayor['NOMBRE'])
+    headers_aero_mayor['Ciudad del aeropuerto:'].append(info_aer_mayor['CIUDAD'])
+    headers_aero_mayor['País del aeropuerto:'].append(info_aer_mayor['PAIS'])
+    headers_aero_mayor['Concurrencia del aeropuerto:'].append(info_aer_mayor['concurrencia'])
+    print ("La información del aeropuerto más importante según la concurrencia milita: ")
+    print(tabulate(headers_aero_mayor, headers='keys', tablefmt='simple_grid'))
+    print("La distancia total de los trayectos sumados es: ", dis_total_trayectos)
+    print ("El número  total  de  trayectos  posibles  partiendo  desde  el  aeropuerto  de mayor importancia es: ", num_trayectos)
+    headers_trayectos = {
+        'ICAO origen:': [],
+        'Aeropuerto origen:': [],
+        'Ciudad origen:': [],
+        'País origen:': [], 
+        'ICAO destino:': [], 
+        'Aeropuerto destino:': [],
+        'Ciudad destino:': [], 
+        'Pais destino:': [], 
+        'Distancia trayecto:': [],
+        'Tiempo trayecto:': []}
+    for i in lt.iterator(lista_final):
+        headers_trayectos['ICAO origen:'].append(i['ICAO origen']),
+        headers_trayectos['Aeropuerto origen:'].append(i['aeropuerto origen']),
+        headers_trayectos['Ciudad origen:'].append(i['ciudad origen']),
+        headers_trayectos['País origen:'].append(i['pais origen']),
+        headers_trayectos['ICAO destino:'].append(i['ICAO destino']),
+        headers_trayectos['Aeropuerto destino:'].append(i['aeropuerto destino']),
+        headers_trayectos['Ciudad destino:'].append(i['ciudad destino']),
+        headers_trayectos['Pais destino:'].append(i['pais destino']),
+        headers_trayectos['Distancia trayecto:'].append(i['distancia trayecto']),
+        headers_trayectos['Tiempo trayecto:'].append(i['tiempo trayecto'])
+    print ("La información de la secuencia de trayectos encontrados: ")
+    print(tabulate(headers_trayectos, headers='keys', tablefmt='simple_grid'))
+    
+    
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    pass
+    info_aer_mayor, tiempo_total = controller.req_6(control)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
+    headers_aero_mayor = {'ICAO del aeropuerto de mayor importancia comercial:': [],
+        'Nombre del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'País del aeropuerto:': [], 
+        'Concurrencia del aeropuerto:': []}
+    headers_aero_mayor['ICAO del aeropuerto de mayor importancia comercial:'].append(info_aer_mayor['ICAO'])
+    headers_aero_mayor['Nombre del aeropuerto:'].append(info_aer_mayor['NOMBRE'])
+    headers_aero_mayor['Ciudad del aeropuerto:'].append(info_aer_mayor['CIUDAD'])
+    headers_aero_mayor['País del aeropuerto:'].append(info_aer_mayor['PAIS'])
+    headers_aero_mayor['Concurrencia del aeropuerto:'].append(info_aer_mayor['concurrencia'])
+    print ("La información del aeropuerto más importante según la concurrencia comercial: ")
+    print(tabulate(headers_aero_mayor, headers='keys', tablefmt='simple_grid'))
+    
 
 
 def print_req_7(control):
@@ -256,14 +319,20 @@ if __name__ == "__main__":
             aeropuertos= 'airports-2022.csv'
             vuelos='fligths-2022.csv'
             load_data(control, aeropuertos, vuelos)
+            
 
-          
 
         elif int(inputs) == 2:
             print_req_1(control)
+            
 
         elif int(inputs) == 3:
-            print_req_2(control)
+            
+            input_lat_origen = input("Ingrese la latitud del lugar origen: ")
+            input_long_origen = input("Ingrese la longitud del lugar origen: ")
+            input_lat_destino = input("Ingrese la latitud del lugar destino: ")
+            input_long_destino = input("Ingrese la longitud del lugar destino: ")
+            print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
 
         elif int(inputs) == 4:
             print_req_3(control)

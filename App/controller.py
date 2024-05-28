@@ -30,7 +30,6 @@ import tracemalloc
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-
 def new_controller():
     """
     Crea una instancia del modelo
@@ -94,13 +93,16 @@ def req_1(control):
     pass
 
 
-def req_2(control):
+def req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino):
     """
     Retorna el resultado del requerimiento 2
     """
     # TODO: Modificar el requerimiento 2
-    pass
-
+    tiempo_inicial = time.time()
+    distancia_total, cant_aero_visitados, lista_final, tiempo_recorrido = model.req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
+    tiempo_final = time.time()
+    tiempo_total = (tiempo_final - tiempo_inicial)*1000
+    return distancia_total, cant_aero_visitados, lista_final, tiempo_recorrido, tiempo_total
 
 def req_3(control):
     """
@@ -123,14 +125,22 @@ def req_5(control):
     Retorna el resultado del requerimiento 5
     """
     # TODO: Modificar el requerimiento 5
-    pass
+    tiempo_inicial = time.time()
+    info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos =model.req_5(control)
+    tiempo_final = time.time()
+    tiempo_total = (tiempo_final - tiempo_inicial)*1000
+    return info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos, tiempo_total
 
 def req_6(control):
     """
     Retorna el resultado del requerimiento 6
     """
     # TODO: Modificar el requerimiento 6
-    pass
+    tiempo_inicial = time.time()
+    info_aer_mayor = model.req_6(control)
+    tiempo_final = time.time()
+    tiempo_total = (tiempo_final - tiempo_inicial)*1000
+    return info_aer_mayor, tiempo_total
 
 
 def req_7(control):

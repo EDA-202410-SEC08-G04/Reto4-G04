@@ -263,8 +263,7 @@ def degrees_cmp(dato1, dato2):
         return vertice1 < vertice2 
 
 
-def req_1(analyzer, punto_origen, punto_destino):
-    
+def req_1(data_structs):
     """
     Función que soluciona el requerimiento 1
     """
@@ -272,13 +271,95 @@ def req_1(analyzer, punto_origen, punto_destino):
     pass
 
 
-def req_2(data_structs):
+def haversine(lat1, lon1, lat2, lon2):
+    R=6372.8
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    lat1 = math.radians(lat1)
+    lat2 = math.radians(lat2)
+    a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distancia = R* c
+    return distancia
+
+def compare_harvesine_distance(dic1, dic2):
+    key1 = next(iter(dic1))
+    key2 = next(iter(dic2))
+    if key1 < key2:
+        return True
+    else:
+        return False
+    
+def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino):
     """
     Función que soluciona el requerimiento 2
     """
     # TODO: Realizar el requerimiento 2
-    pass
+    grafo_comercial_dis = data_structs['aviacion_comercial_distancia']
+    grafo_comercial_tiempo = data_structs['aviacion_comercial_tiempo']
+    vertices_comerciales = gr.vertices(grafo_comercial_dis)
+    mapa_aeropuertos = data_structs['aeropuertos_mapa']
+    input_lat_origen = float(input_lat_origen.replace(',', '.'))
+    input_long_origen = float(input_long_origen.replace(',', '.'))
+    input_lat_destino = float(input_lat_destino.replace(',', '.'))
+    input_long_destino = float(input_long_destino.replace(',', '.'))
+    lista_dis_origen = lt.newList('ARRAY_LIST')
+    lista_dis_destino = lt.newList('ARRAY_LIST')
+    
+    #Encontrar los aeropuertos origen y destino más cercanos a los ingresados
+    for vertice in lt.iterator(vertices_comerciales):
+        valor_id_aeropuerto = me.getValue(mp.get(mapa_aeropuertos, vertice))
+        latitud = valor_id_aeropuerto['LATITUD']
+        latitud = float(latitud.replace(',', '.'))
+        longitud = valor_id_aeropuerto['LONGITUD']
+        longitud = float(longitud.replace(',', '.'))
+        calculo_harvesine_origen = haversine(latitud, longitud, input_lat_origen, input_long_origen)
+        calculo_harvesine_destino = haversine(latitud, longitud, input_lat_destino, input_long_destino)
+        diccionario_o = {calculo_harvesine_origen: valor_id_aeropuerto}
+        diccionario_d = {calculo_harvesine_destino: valor_id_aeropuerto}
+        lt.addLast(lista_dis_origen, diccionario_o)
+        lt.addLast(lista_dis_destino, diccionario_d)  
+    merg.sort(lista_dis_origen, compare_harvesine_distance)
+    merg.sort(lista_dis_destino, compare_harvesine_distance)
+    aeropuerto_inicial = lt.firstElement(lista_dis_origen)
+    aeropuerto_final = lt.firstElement(lista_dis_destino)
+    llave_aer_inicial = next(iter(aeropuerto_inicial))
+    llave_aer_final = next(iter(aeropuerto_final))
+    valor_aer_inicial = aeropuerto_inicial[llave_aer_inicial]
+    valor_aer_final = aeropuerto_final[llave_aer_final]
 
+    if float(llave_aer_inicial) > 30 or float(llave_aer_final) > 30:
+        nombre_aer_inicial = valor_aer_inicial['NOMBRE']
+        nombre_aer_final = valor_aer_final['NOMBRE']
+        print ("No  se  ejecutó la  búsqueda ya que la distancia entre lo ingresado y los aeropuertos, supera los 30km. Sin embargo, el aeropuerto origen más cercano es: ", nombre_aer_inicial, " con una distancia de: ", llave_aer_inicial, " desde el punto ingresado. Y el aeropuerto destino más cercano es: ", nombre_aer_final, " con una distancia de: ", llave_aer_final, " desde el punto ingresado.")
+    
+    # Algoritmo Dijkstra
+    search = djk.Dijkstra(grafo_comercial_dis, valor_aer_inicial['ICAO'])
+    path = djk.pathTo(search, valor_aer_final['ICAO'])
+    distancia_total = (djk.distTo(search, valor_aer_final['ICAO']) + llave_aer_inicial + llave_aer_final)
+    cant_aero_visitados = (lt.size(path)+1)
+    
+    # ordena la cola
+    ordenado = lt.newList('ARRAY_LIST')
+    for item in lt.iterator(path):
+        lt.addFirst(ordenado, item)
+        
+    # acceder a la información de los aeropuertos
+    codigos = lt.newList("ARRAY_LIST")   
+    for id in lt.iterator(ordenado):
+        if id == lt.firstElement(ordenado):
+            lt.addLast(codigos, id['vertexA'])
+        lt.addLast(codigos, id['vertexB'])
+        
+    lista_final = lt.newList("ARRAY_LIST")
+    for line in lt.iterator(codigos):
+        info_aeropuerto = me.getValue(mp.get(mapa_aeropuertos, line))
+        lt.addLast(lista_final, info_aeropuerto)
+
+    #sacar tiempo total del recorrido
+    search= djk.Dijkstra(grafo_comercial_tiempo, valor_aer_inicial['ICAO'])
+    tiempo_total = djk.distTo(search, valor_aer_final['ICAO'])
+    return distancia_total, cant_aero_visitados, lista_final, tiempo_total
 
 def req_3(data_structs):
     """
@@ -295,21 +376,141 @@ def req_4(data_structs):
     # TODO: Realizar el requerimiento 4
     pass
 
+def comparacion_arbol(aero1, aero2):
+    #ordena de mayor a menor
+    concurrencia1, icao1 = aero1
+    concurrencia2, icao2 = aero2
+    if concurrencia1 > concurrencia2:
+        return 1
+    elif concurrencia1 < concurrencia2:
+        return -1
+    else:
+        if icao1 < icao2:
+            return 1
+        elif icao1 > icao2:
+            return -1
+        else:
+            return 0
 
 def req_5(data_structs):
     """
     Función que soluciona el requerimiento 5
     """
     # TODO: Realizar el requerimiento 5
-    pass
+    mapa_aeropuertos = data_structs['aeropuertos_mapa']
+    grafo_militar_dis = data_structs['militar_distancia']
+    grafo_militar_tiempo = data_structs['militar_tiempo']
+    # aeropuerto con mayor importancia militar (concurrencia)
+    vertices_militares = gr.vertices(grafo_militar_dis)
+    arbol_militar = om.newMap(cmpfunction=comparacion_arbol)
+    for aeropuerto in lt.iterator(vertices_militares):
+        num_salen = int(gr.outdegree(grafo_militar_dis, aeropuerto))
+        num_llegan = int(gr.indegree(grafo_militar_dis, aeropuerto))
+        grado_total = num_salen + num_llegan
+        info = me.getValue(mp.get(mapa_aeropuertos, aeropuerto))
+        info["concurrencia"] = grado_total
+        om.put(arbol_militar, (grado_total, aeropuerto), info)
+    
+    #info aeropuerto mayor
+    cantidad, id_aer_mayor = om.maxKey(arbol_militar)
+    info_aer_mayor = me.getValue(mp.get(mapa_aeropuertos, id_aer_mayor))
+    info_aer_mayor["cantidad_arcos"] = cantidad
+    
+    #encontrar los caminos desde el aeropuerto mayor (Dijkstra)
+    search = djk.Dijkstra(grafo_militar_dis, id_aer_mayor)
+    vertices = gr.vertices(grafo_militar_dis)
+    red_respuesta = lt.newList("ARRAY_LIST")
+    
+    dis_total_trayectos = 0
+    #i=0
 
+    for vertice in lt.iterator(vertices):
+        if vertice != id_aer_mayor:
+            distancia = djk.distTo(search, vertice)
+            if distancia != float('inf'):
+                dicc_info_caminos = {}
+                camino = djk.pathTo(search, vertice)
+                dicc_info_caminos["vertice final"] = vertice
+                dicc_info_caminos["distancia camino"] = distancia
+                dicc_info_caminos["camino"] = camino
+                dis_total_trayectos += distancia
+                lt.addLast(red_respuesta, dicc_info_caminos)
+    num_trayectos = lt.size(red_respuesta)
+    
+    # información respuesta esperada 
+    codigos_caminos = lt.newList("ARRAY_LIST")   
+    num_camino = 0
+    for diccionario in lt.iterator(red_respuesta):
+        camino = diccionario['camino']
+        # ordena la cola del camino
+        ordenado = lt.newList('ARRAY_LIST')
+        for item in lt.iterator(camino):
+            lt.addFirst(ordenado, item)
+        dicc_num_aeropuertos = {}
+        num_camino +=1
+        dicc_num_aeropuertos['Numero de camino'] = num_camino
+        dicc_num_aeropuertos['Aeropuertos en el camino'] = lt.newList("ARRAY_LIST") 
+        tam_cada_camino = lt.size(ordenado)
+        for i in range(1, tam_cada_camino + 1):
+            elemento = lt.getElement(ordenado, i)
+            if elemento == lt.firstElement(ordenado):
+                lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexA']) 
+            lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexB']) 
+        lt.addLast(codigos_caminos, dicc_num_aeropuertos)
+    
+    lista_final = lt.newList("ARRAY_LIST")
+    for item in lt.iterator(codigos_caminos):
+        diccionario_final = {}
+        diccionario_final['numero camino'] = item['Numero de camino']
+        lista_valores_aero_camino = item['Aeropuertos en el camino']
+        diccionario_final['ICAO origen'] = lt.firstElement(lista_valores_aero_camino)
+        info_aero_origen =  me.getValue(mp.get(mapa_aeropuertos, lt.firstElement(lista_valores_aero_camino)))
+        diccionario_final['aeropuerto origen'] = info_aero_origen['NOMBRE']
+        diccionario_final['ciudad origen'] = info_aero_origen['CIUDAD']
+        diccionario_final['pais origen'] = info_aero_origen['PAIS']
+        info_aero_destino = me.getValue(mp.get(mapa_aeropuertos, lt.lastElement(lista_valores_aero_camino)))
+        diccionario_final['ICAO destino'] = lt.lastElement(lista_valores_aero_camino)
+        diccionario_final['aeropuerto destino'] = info_aero_destino['NOMBRE']
+        diccionario_final['ciudad destino'] = info_aero_destino['CIUDAD']
+        diccionario_final['pais destino'] = info_aero_destino['PAIS']
+        for distancia in lt.iterator(red_respuesta):
+            if lt.lastElement(lista_valores_aero_camino) == distancia['vertice final']:
+                diccionario_final['distancia trayecto'] = distancia["distancia camino"]
+        search= djk.Dijkstra(grafo_militar_tiempo, lt.firstElement(lista_valores_aero_camino))
+        tiempo_recorrido = djk.distTo(search, lt.lastElement(lista_valores_aero_camino)) 
+        diccionario_final['tiempo trayecto'] = tiempo_recorrido
+        lt.addLast(lista_final, diccionario_final)
+
+    return info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos
+    
 
 def req_6(data_structs):
     """
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
-    pass
+    mapa_aeropuertos = data_structs['aeropuertos_mapa']
+    grafo_comercial_dis = data_structs['aviacion_comercial_distancia']
+    grafo_comercial_tiempo = data_structs['aviacion_comercial_tiempo']
+    
+    # aeropuerto con mayor importancia comercial (concurrencia)
+    vertices_comerciales = gr.vertices(grafo_comercial_dis)
+    arbol_comercial = om.newMap(cmpfunction=comparacion_arbol)
+    for aeropuerto in lt.iterator(vertices_comerciales):
+        num_salen = int(gr.outdegree(grafo_comercial_dis, aeropuerto))
+        num_llegan = int(gr.indegree(grafo_comercial_dis, aeropuerto))
+        grado_total = num_salen + num_llegan
+        info = me.getValue(mp.get(mapa_aeropuertos, aeropuerto))
+        info["concurrencia"] = grado_total
+        om.put(arbol_comercial, (grado_total, aeropuerto), info)
+    
+    #info aeropuerto mayor
+    cantidad, id_aer_mayor = om.maxKey(arbol_comercial)
+    info_aer_mayor = me.getValue(mp.get(mapa_aeropuertos, id_aer_mayor))
+    info_aer_mayor["cantidad_arcos"] = cantidad
+    
+    return info_aer_mayor
+    
 
 
 def req_7(data_structs):
