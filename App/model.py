@@ -288,6 +288,7 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
     """
     # TODO: Realizar el requerimiento 2
     grafo_comercial_dis = data_structs['aviacion_comercial_distancia']
+    grafo_comercial_tiempo = data_structs['aviacion_carga_tiempo']
     vertices_comerciales = gr.vertices(grafo_comercial_dis)
     mapa_aeropuertos = data_structs['aeropuertos_mapa']
     input_lat_origen = float(input_lat_origen.replace(',', '.'))
@@ -297,6 +298,7 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
     lista_dis_origen = lt.newList('ARRAY_LIST')
     lista_dis_destino = lt.newList('ARRAY_LIST')
     
+    #Encontrar los aeropuertos origen y destino más cercanos a los ingresados
     for vertice in lt.iterator(vertices_comerciales):
         valor_id_aeropuerto = me.getValue(mp.get(mapa_aeropuertos, vertice))
         latitud = valor_id_aeropuerto['LATITUD']
@@ -305,12 +307,10 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
         longitud = float(longitud.replace(',', '.'))
         calculo_harvesine_origen = haversine(latitud, longitud, input_lat_origen, input_long_origen)
         calculo_harvesine_destino = haversine(latitud, longitud, input_lat_destino, input_long_destino)
-        #print("LATT", latitud, "LONNN", longitud, "CALCULOOO", calculo_harvesine_origen)
         diccionario_o = {calculo_harvesine_origen: valor_id_aeropuerto}
         diccionario_d = {calculo_harvesine_destino: valor_id_aeropuerto}
         lt.addLast(lista_dis_origen, diccionario_o)
-        lt.addLast(lista_dis_destino, diccionario_d)
-    #print ("LISTAAA", lista_dis_origen)   
+        lt.addLast(lista_dis_destino, diccionario_d)  
     merg.sort(lista_dis_origen, compare_harvesine_distance)
     merg.sort(lista_dis_destino, compare_harvesine_distance)
     aeropuerto_inicial = lt.firstElement(lista_dis_origen)
@@ -321,16 +321,27 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
     valor_aer_inicial = aeropuerto_inicial[llave_aer_inicial]
     valor_aer_final = aeropuerto_final[llave_aer_final]
 
-    if llave_aer_inicial > 30 or llave_aer_final > 30:
+    if float(llave_aer_inicial) > 30 or float(llave_aer_final) > 30:
         nombre_aer_inicial = valor_aer_inicial['NOMBRE']
         nombre_aer_final = valor_aer_final['NOMBRE']
         print ("No  se  ejecutó la  búsqueda ya que la distancia entre lo ingresado y los aeropuertos, supera los 30km. Sin embargo, el aeropuerto origen más cercano es: ", nombre_aer_inicial, " con una distancia de: ", llave_aer_inicial, " desde el punto ingresado. Y el aeropuerto destino más cercano es: ", nombre_aer_final, " con una distancia de: ", llave_aer_final, " desde el punto ingresado.")
         
+    # Algoritmo Dijkstra
+    search = djk.Dijkstra(grafo_comercial_dis, valor_aer_inicial['ICAO'])
+    path = djk.pathTo(search, valor_aer_final['ICAO'])
+    distancia_total = (djk.distTo(search, valor_aer_final['ICAO']) + llave_aer_inicial + llave_aer_final)
+    cant_aero_visitados = (lt.size(path)+1)
+    print ("PATHH", path)
+    print ("dis final", distancia_total)
+    print ("CANTIDAD AEROPUERTOS VISITADOS", cant_aero_visitados)
+    ordenado = lt.newList('ARRAY_LIST')
+    for item in lt.iterator(path):
+        lt.addFirst(ordenado, item)
         
-    print ("AERO INICIAL", aeropuerto_inicial)
-    print ("AERO FINALL", aeropuerto_final)
+    for id in lt.iterator(ordenado):
+        if 
         
-
+    
     
 
 
