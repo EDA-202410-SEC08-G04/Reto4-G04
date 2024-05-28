@@ -221,7 +221,8 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    info_aer_mayor, dis_total_trayectos, lista_final=controller.req_5(control)
+    info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos, tiempo_total=controller.req_5(control)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
     headers_aero_mayor = {'ICAO del aeropuerto de mayor importancia militar:': [],
         'Nombre del aeropuerto:': [],
         'Ciudad del aeropuerto:': [],
@@ -235,6 +236,7 @@ def print_req_5(control):
     print ("La información del aeropuerto más importante según la concurrencia milita: ")
     print(tabulate(headers_aero_mayor, headers='keys', tablefmt='simple_grid'))
     print("La distancia total de los trayectos sumados es: ", dis_total_trayectos)
+    print ("El número  total  de  trayectos  posibles  partiendo  desde  el  aeropuerto  de mayor importancia es: ", num_trayectos)
     headers_trayectos = {
         'ICAO origen:': [],
         'Aeropuerto origen:': [],

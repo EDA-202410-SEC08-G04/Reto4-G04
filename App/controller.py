@@ -125,8 +125,11 @@ def req_5(control):
     Retorna el resultado del requerimiento 5
     """
     # TODO: Modificar el requerimiento 5
-    info_aer_mayor, dis_total_trayectos, lista_final=model.req_5(control)
-    return info_aer_mayor, dis_total_trayectos, lista_final
+    tiempo_inicial = time.time()
+    info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos =model.req_5(control)
+    tiempo_final = time.time()
+    tiempo_total = (tiempo_final - tiempo_inicial)*1000
+    return info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos, tiempo_total
 
 def req_6(control):
     """

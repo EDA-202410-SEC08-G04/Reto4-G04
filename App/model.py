@@ -488,7 +488,7 @@ def req_5(data_structs):
         lt.addLast(lista_final, diccionario_final)
         #print ("DICC FINAL: ", diccionario_final)
     
-    return info_aer_mayor, dis_total_trayectos, lista_final
+    return info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos
     
 
 def req_6(data_structs):
