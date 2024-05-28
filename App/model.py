@@ -390,8 +390,8 @@ def req_5(data_structs):
     """
     # TODO: Realizar el requerimiento 5
     mapa_aeropuertos = data_structs['aeropuertos_mapa']
+    mapa_vuelos = data_structs['vuelos']
     grafo_militar_dis = data_structs['militar_distancia']
-    grafo_militar_tiempo = data_structs['militar_tiempo']
     
     # aeropuerto con mayor importancia militar (concurrencia)
     vertices_militares = gr.vertices(grafo_militar_dis)
@@ -403,8 +403,68 @@ def req_5(data_structs):
         info = me.getValue(mp.get(mapa_aeropuertos, aeropuerto))
         info["concurrencia"] = grado_total
         om.put(arbol_militar, (grado_total, aeropuerto), info)
-    aeropuerto_mayor = om.maxKey(arbol_militar)
-    print ("AEROPUERTO MAYOR", aeropuerto_mayor)
+    
+    #info aeropuerto mayor
+    cantidad, id_aer_mayor = om.maxKey(arbol_militar)
+    info_aer_mayor = me.getValue(mp.get(mapa_aeropuertos, id_aer_mayor))
+    info_aer_mayor["cantidad_arcos"] = cantidad
+    
+    #encontrar los caminos desde el aeropuerto mayor (Dijkstra)
+    search = djk.Dijkstra(grafo_militar_dis, id_aer_mayor)
+    vertices = gr.vertices(grafo_militar_dis)
+    red_respuesta = lt.newList("ARRAY_LIST")
+    
+    dis_total_trayectos = 0
+    #i=0
+
+    for vertice in lt.iterator(vertices):
+        if vertice != id_aer_mayor:
+            distancia = djk.distTo(search, vertice)
+            if distancia != float('inf'):
+                dicc_info_caminos = {}
+                camino = djk.pathTo(search, vertice)
+                dicc_info_caminos["vertice final"] = vertice
+                dicc_info_caminos["distancia camino"] = distancia
+                dicc_info_caminos["camino"] = camino
+                dis_total_trayectos += distancia
+                #print ("Diccionario a añadir: ", dicc_info_caminos)
+                lt.addLast(red_respuesta, dicc_info_caminos)
+                #print ("camino: ", camino)
+                #print ("distancia indi: ", distancia)
+                #i += 1
+                #print ("vertice:", vertice, "distancia: ", distancia, "camino: ", camino)
+                #print ("#: ", i)
+    
+    #print ("tam total: ", dis_total_trayectos)   
+    num_trayectos = lt.size(red_respuesta)
+    #print ("red", red_respuesta)
+    codigos_caminos = lt.newList("ARRAY_LIST")   
+    num_camino = 0
+    for diccionario in lt.iterator(red_respuesta):
+        camino = diccionario['camino']
+        # ordena la cola del camino
+        ordenado = lt.newList('ARRAY_LIST')
+        for item in lt.iterator(camino):
+            lt.addFirst(ordenado, item)
+        dicc_num_aeropuertos = {}
+        num_camino +=1
+        dicc_num_aeropuertos['Numero de camino'] = num_camino
+        dicc_num_aeropuertos['Aeropuertos en el camino'] = lt.newList("ARRAY_LIST") 
+        tam_cada_camino = lt.size(ordenado)
+        #print ('ordenadoooooooooooo:', ordenado)
+        for i in range(1, tam_cada_camino + 1):
+            elemento = lt.getElement(ordenado, i)
+            if elemento == lt.firstElement(ordenado):
+                lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexA']) 
+            lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexB']) 
+        #print ("diccionario: ", dicc_num_aeropuertos)
+        lt.addLast(codigos_caminos, dicc_num_aeropuertos)
+             
+    print ("lista diccionarios final: ", codigos_caminos)
+    
+   
+    
+    
     
     
 
