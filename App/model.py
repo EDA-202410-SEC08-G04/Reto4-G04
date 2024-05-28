@@ -183,7 +183,7 @@ def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
         distance = R * c
         return distance
     elif tipo=='tiempo':
-        tiempo= vuelos['TIEMPO_VUELO']
+        tiempo= float(vuelos['TIEMPO_VUELO'])
         return tiempo
          
 def add_vuelo(analyzer, vuelos):
@@ -288,7 +288,7 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
     """
     # TODO: Realizar el requerimiento 2
     grafo_comercial_dis = data_structs['aviacion_comercial_distancia']
-    grafo_comercial_tiempo = data_structs['aviacion_carga_tiempo']
+    grafo_comercial_tiempo = data_structs['aviacion_comercial_tiempo']
     vertices_comerciales = gr.vertices(grafo_comercial_dis)
     mapa_aeropuertos = data_structs['aeropuertos_mapa']
     input_lat_origen = float(input_lat_origen.replace(',', '.'))
@@ -348,8 +348,10 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
         info_aeropuerto = me.getValue(mp.get(mapa_aeropuertos, line))
         lt.addLast(lista_final, info_aeropuerto)
 
-    return distancia_total, cant_aero_visitados, lista_final
-
+    #sacar tiempo total del recorrido
+    search= djk.Dijkstra(grafo_comercial_tiempo, valor_aer_inicial['ICAO'])
+    tiempo_total = djk.distTo(search, valor_aer_final['ICAO'])
+    return distancia_total, cant_aero_visitados, lista_final, tiempo_total
 
 def req_3(data_structs):
     """
