@@ -459,10 +459,7 @@ def req_5(data_structs):
             lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexB']) 
         #print ("diccionario: ", dicc_num_aeropuertos)
         lt.addLast(codigos_caminos, dicc_num_aeropuertos)
-             
-    #print ("lista diccionarios final: ", codigos_caminos)
     
-    # info tabla 
     
     lista_final = lt.newList("ARRAY_LIST")
     for item in lt.iterator(codigos_caminos):
@@ -496,7 +493,28 @@ def req_6(data_structs):
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
-    pass
+    mapa_aeropuertos = data_structs['aeropuertos_mapa']
+    grafo_comercial_dis = data_structs['aviacion_comercial_distancia']
+    grafo_comercial_tiempo = data_structs['aviacion_comercial_tiempo']
+    
+    # aeropuerto con mayor importancia comercial (concurrencia)
+    vertices_comerciales = gr.vertices(grafo_comercial_dis)
+    arbol_comercial = om.newMap(cmpfunction=comparacion_arbol)
+    for aeropuerto in lt.iterator(vertices_comerciales):
+        num_salen = int(gr.outdegree(grafo_comercial_dis, aeropuerto))
+        num_llegan = int(gr.indegree(grafo_comercial_dis, aeropuerto))
+        grado_total = num_salen + num_llegan
+        info = me.getValue(mp.get(mapa_aeropuertos, aeropuerto))
+        info["concurrencia"] = grado_total
+        om.put(arbol_comercial, (grado_total, aeropuerto), info)
+    
+    #info aeropuerto mayor
+    cantidad, id_aer_mayor = om.maxKey(arbol_comercial)
+    info_aer_mayor = me.getValue(mp.get(mapa_aeropuertos, id_aer_mayor))
+    info_aer_mayor["cantidad_arcos"] = cantidad
+    
+    return info_aer_mayor
+    
 
 
 def req_7(data_structs):

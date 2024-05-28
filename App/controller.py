@@ -136,7 +136,11 @@ def req_6(control):
     Retorna el resultado del requerimiento 6
     """
     # TODO: Modificar el requerimiento 6
-    pass
+    tiempo_inicial = time.time()
+    info_aer_mayor = model.req_6(control)
+    tiempo_final = time.time()
+    tiempo_total = (tiempo_final - tiempo_inicial)*1000
+    return info_aer_mayor, tiempo_total
 
 
 def req_7(control):

@@ -268,7 +268,21 @@ def print_req_6(control):
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    pass
+    info_aer_mayor, tiempo_total = controller.req_6(control)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
+    headers_aero_mayor = {'ICAO del aeropuerto de mayor importancia comercial:': [],
+        'Nombre del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'País del aeropuerto:': [], 
+        'Concurrencia del aeropuerto:': []}
+    headers_aero_mayor['ICAO del aeropuerto de mayor importancia comercial:'].append(info_aer_mayor['ICAO'])
+    headers_aero_mayor['Nombre del aeropuerto:'].append(info_aer_mayor['NOMBRE'])
+    headers_aero_mayor['Ciudad del aeropuerto:'].append(info_aer_mayor['CIUDAD'])
+    headers_aero_mayor['País del aeropuerto:'].append(info_aer_mayor['PAIS'])
+    headers_aero_mayor['Concurrencia del aeropuerto:'].append(info_aer_mayor['concurrencia'])
+    print ("La información del aeropuerto más importante según la concurrencia comercial: ")
+    print(tabulate(headers_aero_mayor, headers='keys', tablefmt='simple_grid'))
+    
 
 
 def print_req_7(control):
