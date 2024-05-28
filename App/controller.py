@@ -87,12 +87,7 @@ def get_data(control, id):
 
 
 def req_1(control):
-    """
-    Retorna el resultado del requerimiento 1
-    """
-    # TODO: Modificar el requerimiento 1
-    pass
-
+    
 
 def req_2(control):
     """

@@ -288,7 +288,7 @@ def req_1(analyzer, lat1, lon1, lat2, lon2):
         else:
             lt.addLast(restantes_origen, i + str(distance_origen))
 
-                    j
+
         if distance_destino<= 30 :
             lt.addLast(list_destino_posible, i + str(distance_destino))
         else:
@@ -300,32 +300,34 @@ def req_1(analyzer, lat1, lon1, lat2, lon2):
         merg.sort(list_destino_posible, degrees_cmp)
         punto_destino= lt.firstElement(list_destino_posible)
         search = dfs.DepthFirstSearch(grafo_req1, punto_origen)
-        camino= dfs.pathTo(search, punto_destino)
-    
+        if dfs.hasPathTo(search, punto_destino):
+            camino= dfs.pathTo(search, punto_destino)
+            return camino
+        else:
+            merg.sort(restantes_origen, degrees_cmp)
+            merg.sort(restantes_destino, degrees_cmp)
+            punto_cercano_o= lt.firstElement(restantes_origen)
+            punto_cercano_d= lt.firstElement(restantes_destino)
+            return punto_cercano_o, punto_cercano_d
+
     elif lt.isEmpty(list_origen_posible) or lt.isEmpty(list_destino_posible):
         merg.sort(restantes_origen, degrees_cmp)
         merg.sort(restantes_destino, degrees_cmp)
         punto_cercano_o= lt.firstElement(restantes_origen)
         punto_cercano_d= lt.firstElement(restantes_destino)
-
-    else:
-        search = dfs.DepthFirstSearch(grafo_req1, punto_origen)
-        camino= dfs.pathTo(search, punto_destino)
-
-    else:
-        search = dfs.DepthFirstSearch(grafo_req1, punto_origen)
-        camino= dfs.pathTo(search, punto_destino)        
+        return punto_cercano_o, punto_cercano_d
 
 
-    
+def req1_modelar_datos(categoria, camino, puntoO, puntoD):
+    if categoria=='Camino':
 
 
         
-    """
+     """
     Función que soluciona el requerimiento 1
-    """
+
     # TODO: Realizar el requerimiento 1
-    pass
+     """
 
 
 def req_2(data_structs):
