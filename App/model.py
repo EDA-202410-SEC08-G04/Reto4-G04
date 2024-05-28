@@ -426,15 +426,7 @@ def req_5(data_structs):
                 dicc_info_caminos["distancia camino"] = distancia
                 dicc_info_caminos["camino"] = camino
                 dis_total_trayectos += distancia
-                #print ("Diccionario a añadir: ", dicc_info_caminos)
                 lt.addLast(red_respuesta, dicc_info_caminos)
-                #print ("camino: ", camino)
-                #print ("distancia indi: ", distancia)
-                #i += 1
-                #print ("vertice:", vertice, "distancia: ", distancia, "camino: ", camino)
-                #print ("#: ", i)
-    
-    #print ("tam total: ", dis_total_trayectos)   
     num_trayectos = lt.size(red_respuesta)
     
     # información respuesta esperada 
@@ -451,15 +443,12 @@ def req_5(data_structs):
         dicc_num_aeropuertos['Numero de camino'] = num_camino
         dicc_num_aeropuertos['Aeropuertos en el camino'] = lt.newList("ARRAY_LIST") 
         tam_cada_camino = lt.size(ordenado)
-        #print ('ordenadoooooooooooo:', ordenado)
         for i in range(1, tam_cada_camino + 1):
             elemento = lt.getElement(ordenado, i)
             if elemento == lt.firstElement(ordenado):
                 lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexA']) 
             lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexB']) 
-        #print ("diccionario: ", dicc_num_aeropuertos)
         lt.addLast(codigos_caminos, dicc_num_aeropuertos)
-    
     
     lista_final = lt.newList("ARRAY_LIST")
     for item in lt.iterator(codigos_caminos):
@@ -483,8 +472,7 @@ def req_5(data_structs):
         tiempo_recorrido = djk.distTo(search, lt.lastElement(lista_valores_aero_camino)) 
         diccionario_final['tiempo trayecto'] = tiempo_recorrido
         lt.addLast(lista_final, diccionario_final)
-        #print ("DICC FINAL: ", diccionario_final)
-    
+
     return info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos
     
 
