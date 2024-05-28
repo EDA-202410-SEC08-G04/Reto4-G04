@@ -255,8 +255,72 @@ def degrees_cmp(dato1, dato2):
         return vertice1 < vertice2 
 
 
-def req_1(analyzer, punto_origen, punto_destino):
     
+def req_1(analyzer, lat1, lon1, lat2, lon2):
+    grafo_req1= analyzer['aviacion_comercial_distancia']
+    mapa_aeropuertos= analyzer['aeropuertos_mapa']
+    lista_vertices= gr.vertices(grafo_req1)
+    list_origen_posible= lt.newList('ARRAY_LIST')
+    restantes_origen= lt.newList('ARRAY_LIST')
+    list_destino_posible= lt.newList('ARRAY_LIST')
+    restantes_destino= lt.newList('ARRAY_LIST')
+    for i in lt.iterator(lista_vertices):
+        pareja= mp.get(mapa_aeropuertos, i)
+        valori=me.getValue(pareja)
+        latio= math.radians(float((valori['LATITUD']).replace(',', '.')))
+        lonio=math.radians(float((valori['LONGITUD']).replace(',', '.')))
+        lat1r=math.radians(float((lat1.replace(',', '.'))))
+        lon1r=math.radians(float((lon1.replace(',', '.'))))
+        lat2r=math.radians(float((lat2.replace(',', '.'))))
+        lon2r=math.radians(float((lon2.replace(',', '.'))))        
+        dlato= latio-lat1r
+        dlono= lonio-lon1r
+        dlatd=latio-lat2r
+        dlond=lonio-lon2r
+        a = math.sin(dlato / 2)**2 + math.cos(latio) * math.cos(lat1r) * math.sin(dlono / 2)**2
+        b = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        c= math.sin(dlatd / 2)**2 + math.cos(latio) * math.cos(lat2r) * math.sin(dlond / 2)**2
+        d = 2 * math.atan2(math.sqrt(c), math.sqrt(1 - c))
+        distance_origen = 6372.8 * b
+        distance_destino= 6372.8 * d
+        if distance_origen<= 30 :
+            lt.addLast(list_origen_posible, i + str(distance_origen))
+        else:
+            lt.addLast(restantes_origen, i + str(distance_origen))
+
+                    j
+        if distance_destino<= 30 :
+            lt.addLast(list_destino_posible, i + str(distance_destino))
+        else:
+            lt.addLast(restantes_destino, i + str(distance_destino))
+    
+    if lt.isEmpty(list_origen_posible)!= True and lt.isEmpty(list_destino_posible)!= True:
+        merg.sort(list_origen_posible, degrees_cmp)
+        punto_origen= lt.firstElement(list_origen_posible)
+        merg.sort(list_destino_posible, degrees_cmp)
+        punto_destino= lt.firstElement(list_destino_posible)
+        search = dfs.DepthFirstSearch(grafo_req1, punto_origen)
+        camino= dfs.pathTo(search, punto_destino)
+    
+    elif lt.isEmpty(list_origen_posible) or lt.isEmpty(list_destino_posible):
+        merg.sort(restantes_origen, degrees_cmp)
+        merg.sort(restantes_destino, degrees_cmp)
+        punto_cercano_o= lt.firstElement(restantes_origen)
+        punto_cercano_d= lt.firstElement(restantes_destino)
+
+    else:
+        search = dfs.DepthFirstSearch(grafo_req1, punto_origen)
+        camino= dfs.pathTo(search, punto_destino)
+
+    else:
+        search = dfs.DepthFirstSearch(grafo_req1, punto_origen)
+        camino= dfs.pathTo(search, punto_destino)        
+
+
+    
+
+
+        
     """
     Función que soluciona el requerimiento 1
     """
