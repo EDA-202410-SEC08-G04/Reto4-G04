@@ -221,9 +221,46 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    controller.req_5(control)
-
-
+    info_aer_mayor, dis_total_trayectos, lista_final=controller.req_5(control)
+    headers_aero_mayor = {'ICAO del aeropuerto de mayor importancia militar:': [],
+        'Nombre del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'País del aeropuerto:': [], 
+        'Concurrencia del aeropuerto:': []}
+    headers_aero_mayor['ICAO del aeropuerto de mayor importancia militar:'].append(info_aer_mayor['ICAO'])
+    headers_aero_mayor['Nombre del aeropuerto:'].append(info_aer_mayor['NOMBRE'])
+    headers_aero_mayor['Ciudad del aeropuerto:'].append(info_aer_mayor['CIUDAD'])
+    headers_aero_mayor['País del aeropuerto:'].append(info_aer_mayor['PAIS'])
+    headers_aero_mayor['Concurrencia del aeropuerto:'].append(info_aer_mayor['concurrencia'])
+    print ("La información del aeropuerto más importante según la concurrencia milita: ")
+    print(tabulate(headers_aero_mayor, headers='keys', tablefmt='simple_grid'))
+    print("La distancia total de los trayectos sumados es: ", dis_total_trayectos)
+    headers_trayectos = {
+        'ICAO origen:': [],
+        'Aeropuerto origen:': [],
+        'Ciudad origen:': [],
+        'País origen:': [], 
+        'ICAO destino:': [], 
+        'Aeropuerto destino:': [],
+        'Ciudad destino:': [], 
+        'Pais destino:': [], 
+        'Distancia trayecto:': [],
+        'Tiempo trayecto:': []}
+    for i in lt.iterator(lista_final):
+        headers_trayectos['ICAO origen:'].append(i['ICAO origen']),
+        headers_trayectos['Aeropuerto origen:'].append(i['aeropuerto origen']),
+        headers_trayectos['Ciudad origen:'].append(i['ciudad origen']),
+        headers_trayectos['País origen:'].append(i['pais origen']),
+        headers_trayectos['ICAO destino:'].append(i['ICAO destino']),
+        headers_trayectos['Aeropuerto destino:'].append(i['aeropuerto destino']),
+        headers_trayectos['Ciudad destino:'].append(i['ciudad destino']),
+        headers_trayectos['Pais destino:'].append(i['pais destino']),
+        headers_trayectos['Distancia trayecto:'].append(i['distancia trayecto']),
+        headers_trayectos['Tiempo trayecto:'].append(i['tiempo trayecto'])
+    print ("La información de la secuencia de trayectos encontrados: ")
+    print(tabulate(headers_trayectos, headers='keys', tablefmt='simple_grid'))
+    
+    
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola

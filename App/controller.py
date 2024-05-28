@@ -125,7 +125,8 @@ def req_5(control):
     Retorna el resultado del requerimiento 5
     """
     # TODO: Modificar el requerimiento 5
-    model.req_5(control)
+    info_aer_mayor, dis_total_trayectos, lista_final=model.req_5(control)
+    return info_aer_mayor, dis_total_trayectos, lista_final
 
 def req_6(control):
     """

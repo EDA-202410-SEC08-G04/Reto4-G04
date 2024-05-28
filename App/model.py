@@ -390,9 +390,8 @@ def req_5(data_structs):
     """
     # TODO: Realizar el requerimiento 5
     mapa_aeropuertos = data_structs['aeropuertos_mapa']
-    mapa_vuelos = data_structs['vuelos']
     grafo_militar_dis = data_structs['militar_distancia']
-    
+    grafo_militar_tiempo = data_structs['militar_tiempo']
     # aeropuerto con mayor importancia militar (concurrencia)
     vertices_militares = gr.vertices(grafo_militar_dis)
     arbol_militar = om.newMap(cmpfunction=comparacion_arbol)
@@ -437,7 +436,8 @@ def req_5(data_structs):
     
     #print ("tam total: ", dis_total_trayectos)   
     num_trayectos = lt.size(red_respuesta)
-    #print ("red", red_respuesta)
+    
+    # información respuesta esperada 
     codigos_caminos = lt.newList("ARRAY_LIST")   
     num_camino = 0
     for diccionario in lt.iterator(red_respuesta):
@@ -460,14 +460,36 @@ def req_5(data_structs):
         #print ("diccionario: ", dicc_num_aeropuertos)
         lt.addLast(codigos_caminos, dicc_num_aeropuertos)
              
-    print ("lista diccionarios final: ", codigos_caminos)
+    #print ("lista diccionarios final: ", codigos_caminos)
     
-   
+    # info tabla 
     
+    lista_final = lt.newList("ARRAY_LIST")
+    for item in lt.iterator(codigos_caminos):
+        diccionario_final = {}
+        diccionario_final['numero camino'] = item['Numero de camino']
+        lista_valores_aero_camino = item['Aeropuertos en el camino']
+        diccionario_final['ICAO origen'] = lt.firstElement(lista_valores_aero_camino)
+        info_aero_origen =  me.getValue(mp.get(mapa_aeropuertos, lt.firstElement(lista_valores_aero_camino)))
+        diccionario_final['aeropuerto origen'] = info_aero_origen['NOMBRE']
+        diccionario_final['ciudad origen'] = info_aero_origen['CIUDAD']
+        diccionario_final['pais origen'] = info_aero_origen['PAIS']
+        info_aero_destino = me.getValue(mp.get(mapa_aeropuertos, lt.lastElement(lista_valores_aero_camino)))
+        diccionario_final['ICAO destino'] = lt.lastElement(lista_valores_aero_camino)
+        diccionario_final['aeropuerto destino'] = info_aero_destino['NOMBRE']
+        diccionario_final['ciudad destino'] = info_aero_destino['CIUDAD']
+        diccionario_final['pais destino'] = info_aero_destino['PAIS']
+        for distancia in lt.iterator(red_respuesta):
+            if lt.lastElement(lista_valores_aero_camino) == distancia['vertice final']:
+                diccionario_final['distancia trayecto'] = distancia["distancia camino"]
+        search= djk.Dijkstra(grafo_militar_tiempo, lt.firstElement(lista_valores_aero_camino))
+        tiempo_recorrido = djk.distTo(search, lt.lastElement(lista_valores_aero_camino)) 
+        diccionario_final['tiempo trayecto'] = tiempo_recorrido
+        lt.addLast(lista_final, diccionario_final)
+        #print ("DICC FINAL: ", diccionario_final)
     
+    return info_aer_mayor, dis_total_trayectos, lista_final
     
-    
-
 
 def req_6(data_structs):
     """
