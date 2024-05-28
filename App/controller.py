@@ -98,8 +98,11 @@ def req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input
     Retorna el resultado del requerimiento 2
     """
     # TODO: Modificar el requerimiento 2
-    model.req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
-
+    tiempo_inicial = time.time()
+    distancia_total, cant_aero_visitados, lista_final = model.req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
+    tiempo_final = time.time()
+    tiempo_total = (tiempo_final - tiempo_inicial)*1000
+    return distancia_total, cant_aero_visitados, lista_final, tiempo_total
 
 def req_3(control):
     """

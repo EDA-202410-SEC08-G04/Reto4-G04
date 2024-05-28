@@ -315,7 +315,6 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
     merg.sort(lista_dis_destino, compare_harvesine_distance)
     aeropuerto_inicial = lt.firstElement(lista_dis_origen)
     aeropuerto_final = lt.firstElement(lista_dis_destino)
-    
     llave_aer_inicial = next(iter(aeropuerto_inicial))
     llave_aer_final = next(iter(aeropuerto_final))
     valor_aer_inicial = aeropuerto_inicial[llave_aer_inicial]
@@ -325,24 +324,31 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
         nombre_aer_inicial = valor_aer_inicial['NOMBRE']
         nombre_aer_final = valor_aer_final['NOMBRE']
         print ("No  se  ejecutó la  búsqueda ya que la distancia entre lo ingresado y los aeropuertos, supera los 30km. Sin embargo, el aeropuerto origen más cercano es: ", nombre_aer_inicial, " con una distancia de: ", llave_aer_inicial, " desde el punto ingresado. Y el aeropuerto destino más cercano es: ", nombre_aer_final, " con una distancia de: ", llave_aer_final, " desde el punto ingresado.")
-        
+    
     # Algoritmo Dijkstra
     search = djk.Dijkstra(grafo_comercial_dis, valor_aer_inicial['ICAO'])
     path = djk.pathTo(search, valor_aer_final['ICAO'])
     distancia_total = (djk.distTo(search, valor_aer_final['ICAO']) + llave_aer_inicial + llave_aer_final)
     cant_aero_visitados = (lt.size(path)+1)
-    print ("PATHH", path)
-    print ("dis final", distancia_total)
-    print ("CANTIDAD AEROPUERTOS VISITADOS", cant_aero_visitados)
+    
+    # ordena la cola
     ordenado = lt.newList('ARRAY_LIST')
     for item in lt.iterator(path):
         lt.addFirst(ordenado, item)
         
+    # acceder a la información de los aeropuertos
+    codigos = lt.newList("ARRAY_LIST")   
     for id in lt.iterator(ordenado):
-        if 
+        if id == lt.firstElement(ordenado):
+            lt.addLast(codigos, id['vertexA'])
+        lt.addLast(codigos, id['vertexB'])
         
-    
-    
+    lista_final = lt.newList("ARRAY_LIST")
+    for line in lt.iterator(codigos):
+        info_aeropuerto = me.getValue(mp.get(mapa_aeropuertos, line))
+        lt.addLast(lista_final, info_aeropuerto)
+
+    return distancia_total, cant_aero_visitados, lista_final
 
 
 def req_3(data_structs):

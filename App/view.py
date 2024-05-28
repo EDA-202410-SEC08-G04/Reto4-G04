@@ -182,8 +182,22 @@ def print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino,
         Función que imprime la solución del Requerimiento 2 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 2
-    controller.req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
-
+    distancia_total, cant_aero_visitados, lista_final, tiempo_total = controller.req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
+    print ("La distancia total del camino entre el punto de origen y el de destino es: ", distancia_total)
+    print ("El número de aeropuertos que se visitan en el camino encontrado: ", cant_aero_visitados)
+    headers = {'Identificador ICAO del aeropuerto:': [],
+        'Nombre del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'País del aeropuerto:': []
+    }
+    for i in lt.iterator(lista_final):
+        headers['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers['País del aeropuerto:'].append(i['PAIS'])
+    print(tabulate(headers, headers='keys', tablefmt='simple_grid'))
+    
 
 def print_req_3(control):
     """
@@ -264,8 +278,6 @@ if __name__ == "__main__":
             input_long_origen = input("Ingrese la longitud del lugar origen: ")
             input_lat_destino = input("Ingrese la latitud del lugar destino: ")
             input_long_destino = input("Ingrese la longitud del lugar destino: ")
-            
-            
             print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
 
         elif int(inputs) == 4:
