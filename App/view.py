@@ -64,7 +64,8 @@ def load_data(control, vuelos, aeropuertos):
     """
     Carga los datos
     """
-    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar = controller.load(control, vuelos, aeropuertos)
+
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_carga, listas_comercial, listas_militar = controller.load(control, vuelos, aeropuertos)
     print('El total de aeropeurtos cargados es:' + str(total_aeropuertos_cargados))
     print('El total de vvuelos cargados es:' + str(total_vuelos_cargados))
     headers_carga_p5 = {
@@ -130,7 +131,7 @@ def load_data(control, vuelos, aeropuertos):
         headers_comercial_p5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
         headers_comercial_p5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
     print('Los primeros 5 aeropuertos comerciales con mayor concurrencia son:')   
-    print(tabulate(headers_carga_p5, headers='keys', tablefmt='simple_grid'))
+    print(tabulate(headers_comercial_p5, headers='keys', tablefmt='simple_grid'))
     
     for i in lt.iterator(u5_comercial):
         headers_comercial_u5['Nombre del aeropuerto:'].append(i['NOMBRE'])
@@ -138,7 +139,7 @@ def load_data(control, vuelos, aeropuertos):
         headers_comercial_u5['Ciudad del aeropuerto:'].append(i['CIUDAD'])
         headers_comercial_u5['Concurrencia comercial:'].append(i['Concurrencia comercial'])
     print('Los últimos 5 aeropuertos comerciales con mayor concurrencia son:')      
-    print(tabulate(headers_carga_u5, headers='keys', tablefmt='simple_grid'))  
+    print(tabulate(headers_comercial_u5, headers='keys', tablefmt='simple_grid'))  
 
     p5_militar = listas_militar[0]
     u5_militar = listas_militar[1]

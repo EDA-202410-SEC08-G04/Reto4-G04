@@ -64,8 +64,8 @@ def load_vuelos(analyzer, vuelos):
 def load(analyzer, aeropuertos, vuelos):
     aeropuertos= load_aeropuertos(analyzer, aeropuertos)
     vuelos= load_vuelos(analyzer, vuelos)
-    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar= model.reporte_de_Carga(analyzer)
-    return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_carga, listas_comercial, listas_militar= model.reporte_de_Carga(analyzer)
+    return total_aeropuertos_cargados, total_vuelos_cargados, listas_carga, listas_comercial, listas_militar
 # Funciones de ordenamiento
 
 def sort(control):

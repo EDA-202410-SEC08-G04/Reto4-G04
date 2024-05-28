@@ -207,10 +207,10 @@ def reporte_de_Carga(analyzer):
     arbol_comercial= analyzer['aviacion_comercial_distancia']
     arbol_carga= analyzer['aviacion_carga_distancia']
     arbol_militar= analyzer['militar_distancia']
-    listas_comercial=listas(arbol_comercial, aeropuertos_cargados)
-    listas_carga=listas(arbol_carga, aeropuertos_cargados)
-    listas_militar=listas(arbol_militar, aeropuertos_cargados)
-    return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
+    listas_militar=categoria(arbol_militar, aeropuertos_cargados, 'militar')
+    listas_comercial=categoria(arbol_comercial, aeropuertos_cargados, 'comercial')
+    listas_carga=categoria(arbol_carga, aeropuertos_cargados, 'carga')
+    return total_aeropuertos_cargados, total_vuelos_cargados, listas_carga, listas_comercial, listas_militar
 
 def listas(arbol, aeropuertos_cargados):
     #Función que organiza por primeros 5 y últimos 5 
@@ -240,6 +240,14 @@ def listas(arbol, aeropuertos_cargados):
         lt.addLast(lt_ultimos, valor)
     return [lt_primeros, lt_ultimos]
 
+def categoria(arbol, aeropuertos_cargados, categoria):
+    if categoria =='comercial':
+        return listas(arbol, aeropuertos_cargados)
+    elif categoria =='carga':
+        return listas(arbol, aeropuertos_cargados)
+    elif categoria =='militar':
+        return listas(arbol, aeropuertos_cargados)
+        
 def degrees_cmp(dato1, dato2):
     #Función de comparación
     ver1 = dato1.split('/')
