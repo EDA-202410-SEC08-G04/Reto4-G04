@@ -186,17 +186,17 @@ def print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino,
     print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
     print ("La distancia total del camino entre el punto de origen y el de destino es: ", distancia_total)
     print ("El número de aeropuertos que se visitan en el camino encontrado: ", cant_aero_visitados)
-    headers = {'Identificador ICAO del aeropuerto:': [],
+    headers_req2 = {'Identificador ICAO del aeropuerto:': [],
         'Nombre del aeropuerto:': [],
         'Ciudad del aeropuerto:': [],
         'País del aeropuerto:': []
     }
     for i in lt.iterator(lista_final):
-        headers['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
-        headers['Nombre del aeropuerto:'].append(i['NOMBRE'])
-        headers['Ciudad del aeropuerto:'].append(i['CIUDAD'])
-        headers['País del aeropuerto:'].append(i['PAIS'])
-    print(tabulate(headers, headers='keys', tablefmt='simple_grid'))
+        headers_req2['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+        headers_req2['Nombre del aeropuerto:'].append(i['NOMBRE'])
+        headers_req2['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+        headers_req2['País del aeropuerto:'].append(i['PAIS'])
+    print(tabulate(headers_req2, headers='keys', tablefmt='simple_grid'))
     print ("Tiempo del trayecto total: ", tiempo_recorrido, " minutos")
     
 
