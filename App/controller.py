@@ -60,6 +60,7 @@ def load_vuelos(analyzer, vuelos):
     for vuelo in input_file_1:
          model.carga_grafos_mapa_vuelos(analyzer, vuelo)
 
+    
 def load(analyzer, aeropuertos, vuelos):
     tiempo_inicial = time.time()
     aeropuertos= load_aeropuertos(analyzer, aeropuertos)
@@ -68,6 +69,9 @@ def load(analyzer, aeropuertos, vuelos):
     tiempo_final = time.time()
     tiempo_total = (tiempo_final - tiempo_inicial)*1000
     return total_aeropuertos_cargados, total_vuelos_cargados, listas_carga, listas_comercial, listas_militar, tiempo_total
+    model.calcular_concurrencia_por_categoria(analyzer)
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar= model.reporte_de_Carga(analyzer)
+    return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
 # Funciones de ordenamiento
 
 def sort(control):
