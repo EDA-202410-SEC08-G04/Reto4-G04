@@ -60,7 +60,8 @@ def load_data(control, vuelos, aeropuertos):
     """
     Carga los datos
     """
-    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar = controller.load(control, vuelos, aeropuertos)
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar, tiempo = controller.load(control, vuelos, aeropuertos)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo, " milisegundos")
     print('El total de aeropuertos cargados es:', total_aeropuertos_cargados)
     print('El total de vuelos cargados es:', total_vuelos_cargados)
 
@@ -131,7 +132,8 @@ def print_req_1(control, lat1, lon1, lat2, lon2):
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d= controller.req_1(control, lat1, lon1, lat2, lon2)
+    lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d, tiempo= controller.req_1(control, lat1, lon1, lat2, lon2)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo, " milisegundos")
     if lista_camino_encontrado==None:
         print('No se enontraron aeropuertos en los rangos de búsqueda')
         print('Estas son las distancias encontradas entre los aeropuertos más cercanos del punto de origen y el punto de destino:')
