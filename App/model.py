@@ -521,6 +521,9 @@ def req_4(data_structs):
     # TODO: Realizar el requerimiento 4
     pass
 
+    
+    
+
 def comparacion_arbol(aero1, aero2):
     #ordena de mayor a menor
     concurrencia1, icao1 = aero1
