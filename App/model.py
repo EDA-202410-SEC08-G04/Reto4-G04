@@ -173,7 +173,7 @@ def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
         distance = R * c
         return distance
     elif tipo=='tiempo':
-        tiempo= vuelos['TIEMPO_VUELO']
+        tiempo= float(vuelos['TIEMPO_VUELO'])
         return tiempo
     
 def calcular_concurrencia_por_categoria(analyzer):
