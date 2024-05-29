@@ -189,11 +189,86 @@ def print_req_3(control):
     pass
 
 
-def print_req_4(control):
+def print_req_4(control, tipo):
     """
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
+    lista_recorrido,  distancia_total, num_trayectos, tiempo_total, nombre_aero_imp=controller.req_4(control, tipo)
+    mapa_aeropuertos= controller.req4_mapa(control)
+    if tipo== 'Si':
+        print('El aeropuerto mas importante es ' + nombre_aero_imp + ' y es el primero en el trayecto')
+        print('La distancia total de los trayectos es ' + str(distancia_total) )
+        print('El tiempo total de los trayectos es ' + str(tiempo_total) )
+        print('El numero total de trayectos posibles es ' + str(num_trayectos))
+        print('Esta es la secuencia de trayectos encontrados:')
+        for recorrido in lista_recorrido['elements']:
+            origen = recorrido['Origen']
+            destino = recorrido['Destino']
+            distancia = recorrido['Distancia recorrida en el trayecto']
+            tiempo = recorrido['El tiempo del trayecto es:']
+
+            # Extraer y formatear la información del origen
+            info_origen = origen[0].replace('El aeropuerto de origen es', '').split(', y su identificador es')
+            nombre_origen = info_origen[0]
+            icao_origen = info_origen[1]
+            info_pais_ciudad_origen = origen[1].replace('Su pais y su ciuda son', '').split(' y ')
+            pais_origen = info_pais_ciudad_origen[0]
+            ciudad_origen = info_pais_ciudad_origen[1]
+
+            # Extraer y formatear la información del destino
+            info_destino = destino[0].replace('El aeropuerto de destino es', '').split(', y su identificador es')
+            nombre_destino = info_destino[0]
+            icao_destino = info_destino[1]
+            info_pais_ciudad_destino = destino[1].replace('Su pais y su ciudad son', '').split(' y ')
+            pais_destino = info_pais_ciudad_destino[0]
+            ciudad_destino = info_pais_ciudad_destino[1]
+
+            # Imprimir la información formateada
+            print(f"Origen: {nombre_origen} ({icao_origen}) en {ciudad_origen}, {pais_origen}")
+            print(f"Destino: {nombre_destino} ({icao_destino}) en {ciudad_destino}, {pais_destino}")
+            print(f"Distancia recorrida en el trayecto: {distancia:.2f} km")
+            print(f"El tiempo del trayecto es: {tiempo}")
+            print("-" * 80)
+        
+    else:
+        print('El aeropuerto mas importante es ' + nombre_aero_imp + ' y es el primero en el trayecto')
+        print('La distancia total de los trayectos es ' + str(distancia_total) )
+        print('El tiempo total de los trayectos es ' + str(tiempo_total) )
+        print('El numero total de trayectos posibles es ' + str(num_trayectos))
+        print('Esta es la secuencia de trayectos encontrados:')
+    for recorrido in lista_recorrido['elements']:
+        # Inicializar las variables para los nombres de los vértices
+        vertexA = vertexB = None
+
+        # Verificar si los nombres de los vértices son 'Origen' y 'Destino' o 'vertexA' y 'vertexB'
+        if 'Origen' in recorrido and 'Destino' in recorrido:
+            vertexA = recorrido['Origen']
+            vertexB = recorrido['Destino']
+        elif 'vertexA' in recorrido and 'vertexB' in recorrido:
+            vertexA = recorrido['vertexA']
+            vertexB = recorrido['vertexB']
+
+
+        weight = recorrido['weight']
+
+        # Obtener información de los aeropuertos
+        aeropuertoA = mapa_aeropuertos.get(vertexA, {})
+        aeropuertoB = mapa_aeropuertos.get(vertexB, {})
+
+        nombreA = aeropuertoA.get('NOMBRE', 'Desconocido')
+        ciudadA = aeropuertoA.get('CIUDAD', 'Desconocido')
+        paisA = aeropuertoA.get('PAIS', 'Desconocido')
+
+        nombreB = aeropuertoB.get('NOMBRE', 'Desconocido')
+        ciudadB = aeropuertoB.get('CIUDAD', 'Desconocido')
+        paisB = aeropuertoB.get('PAIS', 'Desconocido')
+
+        # Imprimir la información formateada
+        print(f"Origen: {nombreA} ({vertexA}) en {ciudadA}, {paisA}")
+        print(f"Destino: {nombreB} ({vertexB}) en {ciudadB}, {paisB}")
+        print(f"Distancia recorrida en el trayecto: {weight:.2f} km")
+        print("-" * 80)
     pass
 
 
@@ -263,7 +338,8 @@ if __name__ == "__main__":
             print_req_3(control)
 
         elif int(inputs) == 5:
-            print_req_4(control)
+            tipo=input('Le gustaria ver la informacion de cada secuencia dentro de trayecto?(Si/No) ')
+            print_req_4(control, tipo)
 
         elif int(inputs) == 6:
             print_req_5(control)

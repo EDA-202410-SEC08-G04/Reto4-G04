@@ -108,14 +108,16 @@ def req_3(control):
     pass
 
 
-def req_4(control):
+def req_4(control, tipo):
     """
     Retorna el resultado del requerimiento 4
     """
     # TODO: Modificar el requerimiento 4
-    pass
-
-
+    lista_recorrido,  distancia_total, num_trayectos, tiempo_total, nombre_aero_imp=model.req_4(control, tipo)
+    return lista_recorrido,  distancia_total, num_trayectos, tiempo_total, nombre_aero_imp
+def req4_mapa(control):
+    mapa_aeropuertos=model.req4_2(control)
+    return mapa_aeropuertos
 def req_5(control):
     """
     Retorna el resultado del requerimiento 5
