@@ -203,7 +203,28 @@ def print_req_3(control):
         Función que imprime la solución del Requerimiento 3 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    rta, suma_distancias, num_posibles_trayectos, distancia,tiempo_total=controller.req_3(control)
+    print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
+    print ("La distancia total de todos los cmanios posibles es ", suma_distancias)
+    print ("El número de trayectos posibles: ", num_posibles_trayectos)
+    print ("La distancia total del camino entre el punto de origen y el de destino es: ", distancia)
+    
+    headers_req3 = {'Identificador ICAO del aeropuerto': [],
+        'Nombre del aeropuerto': [],
+        'Ciudad del aeropuerto': [],
+        'País del aeropuerto': []
+        
+    }
+    for aeropuerto in lt.iterator(rta):
+        
+            headers_req3['Identificador ICAO del aeropuerto'].append(aeropuerto['ICAO'])
+            headers_req3['Nombre del aeropuerto'].append(aeropuerto['NOMBRE'])
+            headers_req3['Ciudad del aeropuerto'].append(aeropuerto['CIUDAD'])
+            headers_req3['País del aeropuerto'].append(aeropuerto['PAIS'])
+                
+            
+    print(tabulate(headers_req3, headers='keys', tablefmt='simple_grid'))
+    
 
 
 def print_req_4(control):
@@ -335,6 +356,7 @@ if __name__ == "__main__":
             print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino)
 
         elif int(inputs) == 4:
+            
             print_req_3(control)
 
         elif int(inputs) == 5:

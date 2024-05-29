@@ -506,12 +506,97 @@ def req_2(data_structs, input_lat_origen, input_long_origen, input_lat_destino, 
     tiempo_total = djk.distTo(search, valor_aer_final['ICAO'])
     return distancia_total, cant_aero_visitados, lista_final, tiempo_total
 
-def req_3(data_structs):
+def req_3(analyzer):
+    
     """
     Función que soluciona el requerimiento 3
     """
     # TODO: Realizar el requerimiento 3
-    pass
+    
+    grafo_distancia_comercial= analyzer['aviacion_comercial_distancia']
+    
+    aeropuertos_mapa= analyzer['aeropuertos_mapa']
+    contador=0
+    lista=lt.newList('ARRAY_LIST')
+    
+
+    vertices = gr.vertices(grafo_distancia_comercial)
+    for vertice in lt.iterator(vertices):
+            concurrencia = gr.degree(grafo_distancia_comercial, vertice)
+            aeropuerto = me.getValue(mp.get(aeropuertos_mapa, vertice))
+            aeropuerto['Concurrencia comercial'] = int(aeropuerto['Concurrencia comercial'])+int(concurrencia)
+            if int(aeropuerto['Concurrencia comercial'])>contador:
+                lt.addLast(lista,aeropuerto)
+                origen=vertice
+                contador=int(aeropuerto['Concurrencia comercial'])
+            
+    mayor_concurrencia=lt.removeLast(lista)
+    
+    
+    
+    
+    trayectos_desde_origen=prim.PrimMST(grafo_distancia_comercial,origen)
+    
+    
+    suma_distancias=prim.weightMST(grafo_distancia_comercial,trayectos_desde_origen)
+    
+    
+    
+    
+    peso_max=0
+    contador=0
+    
+    
+    
+    
+    AX=prim.scan(grafo_distancia_comercial,trayectos_desde_origen,vertice)
+    rutas=AX["edgeTo"]["table"]["elements"]
+    for ruta in rutas:
+        if ruta["value"]!=None:
+            if ruta["value"]["weight"]>peso_max:
+                distancia=ruta["value"]["weight"]
+                destino=ruta["key"]
+                contador=contador+1
+                peso_max=ruta["value"]["weight"]
+            
+            
+    num_posibles_trayectos=contador
+
+    vertices = gr.vertices(grafo_distancia_comercial)
+    for vertice in lt.iterator(vertices):
+            aeropuerto = me.getValue(mp.get(aeropuertos_mapa, vertice))
+            if aeropuerto["ICAO"]==destino:
+                destino=aeropuerto
+
+    print(destino)
+
+    lista_rta=lt.newList('ARRAY_LIST')
+    lt.addFirst(lista_rta,mayor_concurrencia)
+    lt.addLast(lista_rta,destino)
+    
+    
+    
+    
+    return lista_rta, suma_distancias, num_posibles_trayectos, distancia
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+                
+            
+                
+        
+            
+            
+    
 
 
 def req_4(data_structs):

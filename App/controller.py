@@ -118,7 +118,17 @@ def req_3(control):
     Retorna el resultado del requerimiento 3
     """
     # TODO: Modificar el requerimiento 3
-    pass
+    tiempo_inicial = time.time()
+    
+        
+    lista_rta, suma_distancias, num_posibles_trayectos, distancia=model.req_3(control)
+    
+    tiempo_final = time.time()
+    tiempo_total = (tiempo_final - tiempo_inicial)*1000
+    
+        
+    return lista_rta, suma_distancias, num_posibles_trayectos, distancia, tiempo_total
+
 
 
 def req_4(control):
