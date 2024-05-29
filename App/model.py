@@ -301,7 +301,7 @@ def cmp_req1(dato1, dato2):
         return vertice1 < vertice2 
 
 def req_1(analyzer, lat1, lon1, lat2, lon2):
-    grafo_distancia= analyzer['aviacion_comerciasl_distancia']
+    grafo_distancia= analyzer['aviacion_comercial_distancia']
     grafo_tiempo= analyzer['aviacion_comercial_tiempo']
     mapa_aeropuertos= analyzer['aeropuertos_mapa']
     lista_vertices= gr.vertices(grafo_distancia)
