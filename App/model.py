@@ -106,10 +106,13 @@ def new_data_structs():
     return analyzer
 
 def add_aeropuerto(analyzer, aeropuerto):
-    #función que crea un mapa con los aeropuertos
-    aeropuertos_mapa= analyzer['aeropuertos_mapa']
-    id_aeropuerto= aeropuerto['ICAO']
+    aeropuertos_mapa = analyzer['aeropuertos_mapa']
+    id_aeropuerto = aeropuerto['ICAO']
+    aeropuerto['Concurrencia carga'] = 0
+    aeropuerto['Concurrencia comercial'] = 0
+    aeropuerto['Concurrencia militar'] = 0
     mp.put(aeropuertos_mapa, id_aeropuerto, aeropuerto)
+    
     
 def carga_grafos_mapa_vuelos(analyzer, vuelos):
     #función que carga todos los grafos y el mapa de vuelos
@@ -121,49 +124,36 @@ def carga_grafos_mapa_vuelos(analyzer, vuelos):
     grafo_militar_t= analyzer['militar_tiempo']
     tipo_vuelo= vuelos['TIPO_VUELO']
     if tipo_vuelo=='AVIACION_CARGA':
-       add_vertices(analyzer, vuelos, grafo_carga_t, 'tiempo')
-       add_vertices(analyzer, vuelos, grafo_carga_d, 'distancia')
+       add_vertices(analyzer, vuelos, grafo_carga_t, 'tiempo','AVIACION_CARGA')
+       add_vertices(analyzer, vuelos, grafo_carga_d, 'distancia', 'AVIACION_CARGA')
        
     elif tipo_vuelo=='AVIACION_COMERCIAL':
-       add_vertices(analyzer, vuelos, grafo_comercial_d, 'distancia')
-       add_vertices(analyzer, vuelos, grafo_comercial_t, 'tiempo')
+       add_vertices(analyzer, vuelos, grafo_comercial_d, 'distancia', 'AVIACION_COMERCIAL')
+       add_vertices(analyzer, vuelos, grafo_comercial_t, 'tiempo', 'AVIACION_COMERCIAL')
        
     elif tipo_vuelo=='MILITAR':
-      add_vertices(analyzer, vuelos, grafo_militar_d, 'distancia')
-      add_vertices(analyzer, vuelos, grafo_militar_t, 'tiempo')
+      add_vertices(analyzer, vuelos, grafo_militar_d, 'distancia', 'MILITAR')
+      add_vertices(analyzer, vuelos, grafo_militar_t, 'tiempo', 'MILITAR')
     add_vuelo(analyzer, vuelos)
     
 
-def add_vertices(analyzer, vuelos, grafo, tipo):
-    #función que adiciona vertices
-    grafo_carga=grafo
-    origen= vuelos['ORIGEN']
-    contiene_o= gr.containsVertex(grafo_carga, origen)
-    destino= vuelos['DESTINO']
-    contiene_d= gr. containsVertex(grafo_carga, destino)
-    arco= gr.getEdge(grafo_carga, origen,destino)
-    mapa_aeropuertos= analyzer['aeropuertos_mapa']
-    t=0
-    if contiene_o:
-        if contiene_d:
-            if arco != None:
-                t+=1
-            else:
-                gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
-                    
-        else:
-            gr.insertVertex(grafo_carga, destino)
-            gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
-                
+def add_vertices(analyzer, vuelos, grafo, tipo, tipo_vuelo):
+    if vuelos['TIPO_VUELO'] != tipo_vuelo:
+        return  
     else:
-        gr.insertVertex(grafo_carga, origen)
-        if contiene_d:
-            gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
-        else:
-            gr.insertVertex(grafo_carga, destino)
-            gr.addEdge(grafo_carga, origen, destino, calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo))
+        origen = vuelos['ORIGEN']
+        destino = vuelos['DESTINO']
 
-            
+        if not gr.containsVertex(grafo, origen):
+            gr.insertVertex(grafo, origen)
+        if not gr.containsVertex(grafo, destino):
+            gr.insertVertex(grafo, destino)
+
+        peso = calc_arco(analyzer['aeropuertos_mapa'], vuelos, origen, destino, tipo)
+        if gr.getEdge(grafo, origen, destino) is None:
+            gr.addEdge(grafo, origen, destino, peso)
+
+        
 def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
     #función que adiciona arcos, si es un grafo de distancia utiliza la fórmula Harvesine y si es de tiempol, solo extrae el tiempo del vuelo
     if tipo=='distancia':
@@ -185,6 +175,41 @@ def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
     elif tipo=='tiempo':
         tiempo= vuelos['TIEMPO_VUELO']
         return tiempo
+    
+def calcular_concurrencia_por_categoria(analyzer):
+    grafo_carga_d = analyzer['aviacion_carga_distancia']
+    grafo_comercial_d = analyzer['aviacion_comercial_distancia']
+    grafo_militar_d = analyzer['militar_distancia']
+    grafo_carga_t = analyzer['aviacion_carga_tiempo']
+    grafo_comercial_t = analyzer['aviacion_comercial_tiempo']
+    grafo_militar_t = analyzer['militar_tiempo']
+    aeropuertos_mapa = analyzer['aeropuertos_mapa']
+
+    # Calcular concurrencia para aviación de carga (tiempo y distancia)
+    for grafo in [grafo_carga_d, grafo_carga_t]:
+        vertices = gr.vertices(grafo)
+        for vertice in lt.iterator(vertices):
+            concurrencia = gr.degree(grafo, vertice)
+            aeropuerto = me.getValue(mp.get(aeropuertos_mapa, vertice))
+            aeropuerto['Concurrencia carga'] += concurrencia
+    
+    # Calcular concurrencia para aviación comercial (tiempo y distancia)
+    for grafo in [grafo_comercial_d, grafo_comercial_t]:
+        vertices = gr.vertices(grafo)
+        for vertice in lt.iterator(vertices):
+            concurrencia = gr.degree(grafo, vertice)
+            aeropuerto = me.getValue(mp.get(aeropuertos_mapa, vertice))
+            aeropuerto['Concurrencia comercial'] += concurrencia
+    
+    # Calcular concurrencia para aviación militar (tiempo y distancia)
+    for grafo in [grafo_militar_d, grafo_militar_t]:
+        vertices = gr.vertices(grafo)
+        for vertice in lt.iterator(vertices):
+            concurrencia = gr.degree(grafo, vertice)
+            aeropuerto = me.getValue(mp.get(aeropuertos_mapa, vertice))
+            aeropuerto['Concurrencia militar'] += concurrencia
+            
+
          
 def add_vuelo(analyzer, vuelos):
     #función que crea el mapa de vuelos
@@ -204,24 +229,31 @@ def reporte_de_Carga(analyzer):
     total_aeropuertos_cargados= lt.size(mp.keySet(aeropuertos_cargados))
     vuelos_cargados= analyzer['vuelos']
     total_vuelos_cargados= lt.size(mp.keySet(vuelos_cargados))
+    
     arbol_comercial= analyzer['aviacion_comercial_distancia']
+    listas_comercial=listas(arbol_comercial, aeropuertos_cargados, 'Concurrencia comercial')
+    
     arbol_carga= analyzer['aviacion_carga_distancia']
+    listas_carga=listas(arbol_carga, aeropuertos_cargados, 'Concurrencia carga')
+    
     arbol_militar= analyzer['militar_distancia']
-    listas_comercial=listas(arbol_comercial, aeropuertos_cargados)
-    listas_carga=listas(arbol_carga, aeropuertos_cargados)
-    listas_militar=listas(arbol_militar, aeropuertos_cargados)
+    listas_militar=listas(arbol_militar, aeropuertos_cargados, 'Concurrencia militar')
+    
     return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
 
-def listas(arbol, aeropuertos_cargados):
+def listas(arbol, aeropuertos_cargados, categoria):
     #Función que organiza por primeros 5 y últimos 5 
     lista_vertices= gr.vertices(arbol)
     lista_orden= lt.newList('ARRAY_LIST')
     for i in lt.iterator(lista_vertices):
-        elementos= i + '/' + str(gr.degree(arbol, i))
-        lt.addLast(lista_orden, elementos)
-    merg.sort(lista_orden, degrees_cmp)
+        diccionarioi= me.getValue(mp.get(aeropuertos_cargados, i))
+        elementos= i + '/' + str(diccionarioi[categoria])
+        sin_cero=elementos.split('/')
+        if int(sin_cero[1]) != 0:
+            lt.addLast(lista_orden, elementos)
+    merg.sort(lista_orden, degrees_cmp)       
     lista_primeros= lt.subList(lista_orden, 1, 5)
-    lista_ultimos= lt.subList(lista_orden, lt.size(lista_orden)-5, 5)
+    lista_ultimos= lt.subList(lista_orden, lt.size(lista_orden)-4, 5)
     lt_primeros= lt.newList('ARRAY_LIST')
     lt_ultimos= lt.newList('ARRAY_LIST')
     for i in lt.iterator(lista_primeros):
@@ -229,14 +261,14 @@ def listas(arbol, aeropuertos_cargados):
         key= command[0]
         pareja=  mp.get(aeropuertos_cargados, key)
         valor=me.getValue(pareja)
-        valor['Concurrencia comercial']= command[1]
+        valor[categoria]=command[1]
         lt.addLast(lt_primeros, valor)
     for i in lt.iterator(lista_ultimos):
         command= i.split('/')
         key= command[0]
         pareja=  mp.get(aeropuertos_cargados, key)
         valor=me.getValue(pareja)
-        valor['Concurrencia comercial']= command[1]
+        valor[categoria]=command[1]
         lt.addLast(lt_ultimos, valor)
     return [lt_primeros, lt_ultimos]
 
@@ -268,7 +300,6 @@ def cmp_req1(dato1, dato2):
     else:
         return vertice1 < vertice2 
 
-    
 def req_1(analyzer, lat1, lon1, lat2, lon2):
     grafo_distancia= analyzer['aviacion_comerciasl_distancia']
     grafo_tiempo= analyzer['aviacion_comercial_tiempo']

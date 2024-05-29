@@ -61,9 +61,11 @@ def load_vuelos(analyzer, vuelos):
     for vuelo in input_file_1:
          model.carga_grafos_mapa_vuelos(analyzer, vuelo)
 
+    
 def load(analyzer, aeropuertos, vuelos):
     aeropuertos= load_aeropuertos(analyzer, aeropuertos)
     vuelos= load_vuelos(analyzer, vuelos)
+    model.calcular_concurrencia_por_categoria(analyzer)
     total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar= model.reporte_de_Carga(analyzer)
     return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
 # Funciones de ordenamiento
