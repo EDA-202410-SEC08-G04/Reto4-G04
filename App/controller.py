@@ -30,6 +30,7 @@ import tracemalloc
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
+
 def new_controller():
     """
     Crea una instancia del modelo
@@ -62,16 +63,12 @@ def load_vuelos(analyzer, vuelos):
 
     
 def load(analyzer, aeropuertos, vuelos):
-    tiempo_inicial = time.time()
     aeropuertos= load_aeropuertos(analyzer, aeropuertos)
     vuelos= load_vuelos(analyzer, vuelos)
-    total_aeropuertos_cargados, total_vuelos_cargados, listas_carga, listas_comercial, listas_militar= model.reporte_de_Carga(analyzer)
-    tiempo_final = time.time()
-    tiempo_total = (tiempo_final - tiempo_inicial)*1000
-    return total_aeropuertos_cargados, total_vuelos_cargados, listas_carga, listas_comercial, listas_militar, tiempo_total
     model.calcular_concurrencia_por_categoria(analyzer)
     total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar= model.reporte_de_Carga(analyzer)
     return total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar
+
 # Funciones de ordenamiento
 
 def sort(control):

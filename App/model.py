@@ -173,7 +173,7 @@ def calc_arco(mapa_aeropuertos, vuelos, origen, destino, tipo):
         distance = R * c
         return distance
     elif tipo=='tiempo':
-        tiempo= float(vuelos['TIEMPO_VUELO'])
+        tiempo= vuelos['TIEMPO_VUELO']
         return tiempo
     
 def calcular_concurrencia_por_categoria(analyzer):
@@ -272,14 +272,6 @@ def listas(arbol, aeropuertos_cargados, categoria):
         lt.addLast(lt_ultimos, valor)
     return [lt_primeros, lt_ultimos]
 
-def categoria(arbol, aeropuertos_cargados, categoria):
-    if categoria =='comercial':
-        return listas(arbol, aeropuertos_cargados)
-    elif categoria =='carga':
-        return listas(arbol, aeropuertos_cargados)
-    elif categoria =='militar':
-        return listas(arbol, aeropuertos_cargados)
-        
 def degrees_cmp(dato1, dato2):
     #Función de comparación
     ver1 = dato1.split('/')

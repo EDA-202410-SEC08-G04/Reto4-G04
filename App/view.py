@@ -115,6 +115,10 @@ def load_data(control, vuelos, aeropuertos):
 
 
 
+
+       
+    
+
 def print_data(control, id):
     """
         Función que imprime un dato dado su ID
@@ -167,7 +171,6 @@ def print_req_1(control, lat1, lon1, lat2, lon2):
             headers_camino['Pais del aeropuerto:'].append(i['PAIS'])
             
         print(tabulate(headers_camino, headers='keys', tablefmt='simple_grid'))
-    pass
 
 
 def print_req_2(control, input_lat_origen, input_long_origen, input_lat_destino, input_long_destino):
@@ -312,8 +315,8 @@ if __name__ == "__main__":
             aeropuertos= 'airports-2022.csv'
             vuelos='fligths-2022.csv'
             load_data(control, aeropuertos, vuelos)
-            
 
+          
 
         elif int(inputs) == 2:
             lat1=input('Ingrese la latitud del punto de origen que quiere consultar:')
