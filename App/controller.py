@@ -86,8 +86,9 @@ def get_data(control, id):
     pass
 
 
-def req_1(control):
-    
+def req_1(analyzer, lat1, lon1, lat2, lon2):
+    lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d= model.req_1(analyzer, lat1, lon1, lat2, lon2)
+    return lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d
 
 def req_2(control):
     """
