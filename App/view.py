@@ -288,7 +288,7 @@ def print_req_6(control, M_aeropuertos):
     """
     # TODO: Imprimir el resultado del requerimiento 6
     
-    info_aer_mayor, lista_rta, tiempo_total = controller.req_6(control,M_aeropuertos)
+    info_aer_mayor, tiempo_total = controller.req_6(control,M_aeropuertos)
     print ("El tiempo que se demora algoritmo en encontrar la solució es: ", tiempo_total, " milisegundos")
     headers_aero_mayor = {'ICAO del aeropuerto de mayor importancia comercial:': [],
         'Nombre del aeropuerto:': [],
@@ -304,20 +304,6 @@ def print_req_6(control, M_aeropuertos):
     print(tabulate(headers_aero_mayor, headers='keys', tablefmt='simple_grid'))
     
     
-    
-    headers_vuelos = {'ICAO:': [],
-            'Nombre del aeropuerto:': [],
-            'Ciudad del aeropuerto:': [],
-            'País del aeropuerto:': []}
-    
-    for rta in lt.iterator(lista_rta):
-        headers_vuelos['ICAO:'].append(rta['ICAO'])
-        headers_vuelos['Nombre del aeropuerto:'].append(rta['NOMBRE'])
-        headers_vuelos['Ciudad del aeropuerto:'].append(rta['CIUDAD'])
-        headers_vuelos['País del aeropuerto:'].append(rta['PAIS'])
-    
-
-    print(tabulate(headers_vuelos, headers='keys', tablefmt='simple_grid'))
         
     
 

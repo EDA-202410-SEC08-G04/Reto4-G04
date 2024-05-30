@@ -762,9 +762,7 @@ def req_6(data_structs, M_aeropuertos):
         lt.addLast(lista_2,m_x_aeropuerto)
         i=i+1
 
-        
-    
-    
+   
     latitud_bog =info_aer_mayor['LATITUD']
     latitud_bog = float(latitud_bog.replace(',', '.'))
     longitud_bog = info_aer_mayor['LONGITUD']
@@ -772,11 +770,7 @@ def req_6(data_structs, M_aeropuertos):
     
     lista_distancia=[]
     
-    
-    
-    
-    
-    
+
     for aeropuerto in lt.iterator(lista_2):
         latitud =aeropuerto['LATITUD']
         latitud = float(latitud.replace(',', '.'))
@@ -833,28 +827,19 @@ def req_6(data_structs, M_aeropuertos):
     vertices = gr.vertices(grafo_comercial_dis)
     for codigo in lt.iterator(codigos_caminos):
         segunda_lista=codigo['Aeropuertos en el camino']
-        lista_dentro=lt.newList("ARRAY_LIST")
+        lista_dentro=[]
         for mini_lista in lt.iterator(segunda_lista):
-            lt.addLast(lista_dentro,mini_lista)
+            lista_dentro.append(mini_lista)
             dic={codigo['Numero de camino']:lista_dentro}
             #print ("dic: ", dic)
         lt.addLast(lista_rta,dic)
     
-    
-            
-                
+             
     print("Lista respuesta: ", lista_rta)    
     print(lista_distancia)
     
     
-     
-        
-              
- 
- 
-    
-    
-    #return info_aer_mayor, lista_rta
+    return info_aer_mayor
 
 
 def req_7(data_structs):

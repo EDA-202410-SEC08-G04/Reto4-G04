@@ -156,10 +156,10 @@ def req_6(control,M_aeropuertos):
     """
     # TODO: Modificar el requerimiento 6
     tiempo_inicial = time.time()
-    info_aer_mayor,lista_rta = model.req_6(control,M_aeropuertos)
+    info_aer_mayor = model.req_6(control,M_aeropuertos)
     tiempo_final = time.time()
     tiempo_total = (tiempo_final - tiempo_inicial)*1000
-    return info_aer_mayor, lista_rta, tiempo_total
+    return info_aer_mayor, tiempo_total
 
 
 def req_7(control):
