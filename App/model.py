@@ -717,14 +717,14 @@ def req_5(data_structs):
     return info_aer_mayor, dis_total_trayectos, lista_final, num_trayectos
     
 
-def req_6(data_structs):
+def req_6(data_structs, M_aeropuertos):
     """
     Función que soluciona el requerimiento 6
     """
     # TODO: Realizar el requerimiento 6
     mapa_aeropuertos = data_structs['aeropuertos_mapa']
     grafo_comercial_dis = data_structs['aviacion_comercial_distancia']
-    grafo_comercial_tiempo = data_structs['aviacion_comercial_tiempo']
+    
     
     # aeropuerto con mayor importancia comercial (concurrencia)
     vertices_comerciales = gr.vertices(grafo_comercial_dis)
@@ -742,8 +742,126 @@ def req_6(data_structs):
     info_aer_mayor = me.getValue(mp.get(mapa_aeropuertos, id_aer_mayor))
     info_aer_mayor["cantidad_arcos"] = cantidad
     
-    return info_aer_mayor
+    contador=0
+    lista=lt.newList('ARRAY_LIST')
     
+
+    vertices = gr.vertices(grafo_comercial_dis)
+    
+    
+    for vertice in lt.iterator(vertices):
+            concurrencia = gr.degree(grafo_comercial_dis, vertice)
+            aeropuerto = me.getValue(mp.get(mapa_aeropuertos, vertice))
+            aeropuerto['Concurrencia comercial'] = int(aeropuerto['Concurrencia comercial'])+int(concurrencia)
+            if int(aeropuerto['Concurrencia comercial'])>contador:
+                lt.addLast(lista,aeropuerto)
+                contador=int(aeropuerto['Concurrencia comercial'])
+      
+    lista_2=lt.newList('ARRAY_LIST')         
+    i=0
+    while i<int(M_aeropuertos):
+        m_x_aeropuerto=lt.removeLast(lista)
+        lt.addLast(lista_2,m_x_aeropuerto)
+        i=i+1
+
+        
+    
+    
+    latitud_bog =info_aer_mayor['LATITUD']
+    latitud_bog = float(latitud_bog.replace(',', '.'))
+    longitud_bog = info_aer_mayor['LONGITUD']
+    longitud_bog = float(longitud_bog.replace(',', '.'))
+    
+    lista_distancia=[]
+    
+    
+    
+    
+    
+    
+    for aeropuerto in lt.iterator(lista_2):
+        latitud =aeropuerto['LATITUD']
+        latitud = float(latitud.replace(',', '.'))
+        longitud = aeropuerto['LONGITUD']
+        longitud = float(longitud.replace(',', '.'))
+        calculo_harvesine = haversine(latitud_bog, longitud_bog, latitud, longitud)
+
+        lista_distancia.append(calculo_harvesine)
+        
+    search = djk.Dijkstra(grafo_comercial_dis, id_aer_mayor)
+    vertices = gr.vertices(grafo_comercial_dis)
+    red_respuesta = lt.newList("ARRAY_LIST")
+    
+    dis_total_trayectos = 0
+    #i=0
+
+    for vertice in lt.iterator(vertices):
+        if vertice != id_aer_mayor:
+            distancia = djk.distTo(search, vertice)
+            if distancia != float('inf'):
+                dicc_info_caminos = {}
+                camino = djk.pathTo(search, vertice)
+                dicc_info_caminos["vertice final"] = vertice
+                dicc_info_caminos["distancia camino"] = distancia
+                dicc_info_caminos["camino"] = camino
+                dis_total_trayectos += distancia
+                lt.addLast(red_respuesta, dicc_info_caminos)
+   
+    
+     
+    codigos_caminos = lt.newList("ARRAY_LIST")   
+    num_camino = 0
+    for diccionario in lt.iterator(red_respuesta):
+        camino = diccionario['camino']
+       
+        ordenado = lt.newList('ARRAY_LIST')
+        for item in lt.iterator(camino):
+            lt.addFirst(ordenado, item)
+        dicc_num_aeropuertos = {}
+        num_camino +=1
+        dicc_num_aeropuertos['Numero de camino'] = num_camino
+        dicc_num_aeropuertos['Aeropuertos en el camino'] = lt.newList("ARRAY_LIST") 
+        tam_cada_camino = lt.size(ordenado)
+        for i in range(1, tam_cada_camino + 1):
+            elemento = lt.getElement(ordenado, i)
+            if elemento == lt.firstElement(ordenado):
+                lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexA']) 
+            lt.addLast(dicc_num_aeropuertos['Aeropuertos en el camino'], elemento['vertexB']) 
+        lt.addLast(codigos_caminos, dicc_num_aeropuertos)
+        
+    lista_rta=lt.newList("ARRAY_LIST")
+    
+    
+    vertices = gr.vertices(grafo_comercial_dis)
+    for codigo in lt.iterator(codigos_caminos):
+        segunda_lista=codigo['Aeropuertos en el camino']
+        lista_dentro=lt.newList("ARRAY_LIST")
+        for mini_lista in lt.iterator(segunda_lista):
+            lt.addLast(lista_dentro,mini_lista)
+            dic={codigo['Numero de camino']:lista_dentro}
+            
+            lt.addLast(lista_rta,dic)
+    
+    
+            
+        
+            
+       
+           
+                
+                
+    print(lista_rta)    
+    print(lista_distancia)
+    
+    
+     
+        
+              
+ 
+ 
+    
+    
+    return info_aer_mayor, lista_rta
 
 
 def req_7(data_structs):
