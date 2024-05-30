@@ -209,7 +209,6 @@ def print_req_4(control, tipo):
             distancia = recorrido['Distancia recorrida en el trayecto']
             tiempo = recorrido['El tiempo del trayecto es:']
 
-            # Extraer y formatear la información del origen
             info_origen = origen[0].replace('El aeropuerto de origen es', '').split(', y su identificador es')
             nombre_origen = info_origen[0]
             icao_origen = info_origen[1]
@@ -217,7 +216,6 @@ def print_req_4(control, tipo):
             pais_origen = info_pais_ciudad_origen[0]
             ciudad_origen = info_pais_ciudad_origen[1]
 
-            # Extraer y formatear la información del destino
             info_destino = destino[0].replace('El aeropuerto de destino es', '').split(', y su identificador es')
             nombre_destino = info_destino[0]
             icao_destino = info_destino[1]
@@ -225,7 +223,6 @@ def print_req_4(control, tipo):
             pais_destino = info_pais_ciudad_destino[0]
             ciudad_destino = info_pais_ciudad_destino[1]
 
-            # Imprimir la información formateada
             print(f"Origen: {nombre_origen} ({icao_origen}) en {ciudad_origen}, {pais_origen}")
             print(f"Destino: {nombre_destino} ({icao_destino}) en {ciudad_destino}, {pais_destino}")
             print(f"Distancia recorrida en el trayecto: {distancia:.2f} km")
@@ -239,10 +236,8 @@ def print_req_4(control, tipo):
         print('El numero total de trayectos posibles es ' + str(num_trayectos))
         print('Esta es la secuencia de trayectos encontrados:')
     for recorrido in lista_recorrido['elements']:
-        # Inicializar las variables para los nombres de los vértices
         vertexA = vertexB = None
 
-        # Verificar si los nombres de los vértices son 'Origen' y 'Destino' o 'vertexA' y 'vertexB'
         if 'Origen' in recorrido and 'Destino' in recorrido:
             vertexA = recorrido['Origen']
             vertexB = recorrido['Destino']
@@ -253,7 +248,6 @@ def print_req_4(control, tipo):
 
         weight = recorrido['weight']
 
-        # Obtener información de los aeropuertos
         aeropuertoA = mapa_aeropuertos.get(vertexA, {})
         aeropuertoB = mapa_aeropuertos.get(vertexB, {})
 
@@ -265,7 +259,6 @@ def print_req_4(control, tipo):
         ciudadB = aeropuertoB.get('CIUDAD', 'Desconocido')
         paisB = aeropuertoB.get('PAIS', 'Desconocido')
 
-        # Imprimir la información formateada
         print(f"Origen: {nombreA} ({vertexA}) en {ciudadA}, {paisA}")
         print(f"Destino: {nombreB} ({vertexB}) en {ciudadB}, {paisB}")
         print(f"Distancia recorrida en el trayecto: {weight:.2f} km")
