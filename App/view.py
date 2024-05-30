@@ -194,8 +194,9 @@ def print_req_4(control, tipo):
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
-    lista_recorrido,  distancia_total, num_trayectos, tiempo_total, nombre_aero_imp=controller.req_4(control, tipo)
+    lista_recorrido,  distancia_total, num_trayectos, tiempo_total, nombre_aero_imp, t=controller.req_4(control, tipo)
     mapa_aeropuertos= controller.req4_mapa(control)
+    print ("El tiempo que se demora el algorimo en ejecutarse es: ", t)
     if tipo== 'Si':
         print('El aeropuerto mas importante es ' + nombre_aero_imp + ' y es el primero en el trayecto')
         print('La distancia total de los trayectos es ' + str(distancia_total) )
