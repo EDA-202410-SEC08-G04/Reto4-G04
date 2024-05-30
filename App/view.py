@@ -288,12 +288,51 @@ def print_req_6(control):
     pass
 
 
-def print_req_7(control):
+def print_req_7(control, lat1, lon1, lat2, lon2):
     """
-        Función que imprime la solución del Requerimiento 7 en consola
+        Función que imprime la solución del Requerimiento 1 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 7
-    pass
+    # TODO: Imprimir el resultado del requerimiento 1
+    lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d= controller.req_7(control, lat1, lon1, lat2, lon2)
+    if lista_camino_encontrado==None:
+        print('No se enontraron aeropuertos en los rangos de búsqueda')
+        print('Estas son las distancias encontradas entre los aeropuertos más cercanos del punto de origen y el punto de destino:')
+        print('Codigo del aeropuerto mas cercano al punto de origen:')
+        po=  punto_cercano_o.split('/')
+        po_codigo= po[0]
+        po_distancia= po[1]
+        print(po_codigo)
+        print('Distancia entre el aeropuerto mas cercano y el punto de origen:')
+        print(po_distancia)
+        print('Codigo del aeropuerto mas cercano al punto de destino:')
+        pd=  punto_cercano_d.split('/')
+        pd_codigo= pd[0]
+        pd_distancia= pd[1]
+        print(pd_codigo)
+        print('Distancia entre el aeropuerto mas cercano y el punto de destino:')
+        print(pd_distancia)
+    else:
+        print('La cantidad de vuelos cargados es:')
+        print(num_aeropuertos_visitados)
+        print('La distancia total del trayecto es:')
+        print(distancia_total)
+        print('El tiempo total del trayecto en minutos es:')
+        print(tiempo_total)
+        print('Esta es la secuencia del trayecto') 
+        print('El primer elemento es el Aeropuerto de origen y el ultimo es el Aeropuerto de destino:')
+        headers_camino = {
+        'Nombre del aeropuerto:': [],
+        'Identificador ICAO del aeropuerto:': [],
+        'Ciudad del aeropuerto:': [],
+        'Pais del aeropuerto:': []
+        }
+        for i in lt.iterator(lista_camino_encontrado):
+            headers_camino['Nombre del aeropuerto:'].append(i['NOMBRE'])
+            headers_camino['Identificador ICAO del aeropuerto:'].append(i['ICAO'])
+            headers_camino['Ciudad del aeropuerto:'].append(i['CIUDAD'])
+            headers_camino['Pais del aeropuerto:'].append(i['PAIS'])
+            
+        print(tabulate(headers_camino, headers='keys', tablefmt='simple_grid'))
 
 
 def print_req_8(control):
@@ -348,7 +387,11 @@ if __name__ == "__main__":
             print_req_6(control)
 
         elif int(inputs) == 8:
-            print_req_7(control)
+            lat1=input('Ingrese la latitud del punto de origen que quiere consultar:')
+            lon1=input('Ingrese la longitud del punto de origen que quiere consultar:')
+            lat2=input('Ingrese la latitud del punto de destino que quiere consultar:')
+            lon2=input('Ingrese la longitud del punto de destino que quiere consultar:')
+            print_req_7(control, lat1, lon1, lat2, lon2)
 
         elif int(inputs) == 9:
             print_req_8(control)

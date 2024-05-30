@@ -133,13 +133,9 @@ def req_6(control):
     pass
 
 
-def req_7(control):
-    """
-    Retorna el resultado del requerimiento 7
-    """
-    # TODO: Modificar el requerimiento 7
-    pass
-
+def req_7(analyzer, lat1, lon1, lat2, lon2):
+    lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d= model.req_7(analyzer, lat1, lon1, lat2, lon2)
+    return lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d
 
 def req_8(control):
     """

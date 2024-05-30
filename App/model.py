@@ -301,7 +301,7 @@ def cmp_req1(dato1, dato2):
         return vertice1 < vertice2 
 
 def req_1(analyzer, lat1, lon1, lat2, lon2):
-    grafo_distancia= analyzer['aviacion_comerciasl_distancia']
+    grafo_distancia= analyzer['aviacion_comercial_distancia']
     grafo_tiempo= analyzer['aviacion_comercial_tiempo']
     mapa_aeropuertos= analyzer['aeropuertos_mapa']
     lista_vertices= gr.vertices(grafo_distancia)
@@ -571,12 +571,130 @@ def req_6(data_structs):
     pass
 
 
-def req_7(data_structs):
-    """
-    Función que soluciona el requerimiento 7
-    """
-    # TODO: Realizar el requerimiento 7
-    pass
+def req_7(analyzer, lat1, lon1, lat2, lon2):
+    lat1 = float(lat1.replace(',', '.'))
+    lon1 = float(lon1.replace(',', '.'))
+    lat2 = float(lat2.replace(',', '.'))
+    lon2 = float(lon2.replace(',', '.'))
+
+    grafo_distancia = analyzer['aviacion_comercial_distancia']
+    grafo_tiempo = analyzer['aviacion_comercial_tiempo']
+    mapa_aeropuertos = analyzer['aeropuertos_mapa']
+    lista_vertices = gr.vertices(grafo_distancia)
+    list_origen_posible = lt.newList('ARRAY_LIST')
+    list_destino_posible = lt.newList('ARRAY_LIST')
+    restantes_origen = lt.newList('ARRAY_LIST')
+    restantes_destino = lt.newList('ARRAY_LIST')
+    
+    def haversine(lat1, lon1, lat2, lon2):
+        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        return 6372.8 * c
+    
+    for i in lt.iterator(lista_vertices):
+        pareja = mp.get(mapa_aeropuertos, i)
+        valori = me.getValue(pareja)
+        latio = float(valori['LATITUD'].replace(',', '.'))
+        lonio = float(valori['LONGITUD'].replace(',', '.'))
+        
+        distance_origen = haversine(lat1, lon1, latio, lonio)
+        distance_destino = haversine(lat2, lon2, latio, lonio)
+        
+        if distance_origen <= 30 and distance_destino <= 30:
+            lt.addLast(list_origen_posible, i + '/' + str(distance_origen))
+            lt.addLast(list_destino_posible, i + '/' + str(distance_destino))
+        elif distance_origen > 30 and distance_destino <= 30:
+            lt.addLast(list_destino_posible, i + '/' + str(distance_destino))
+            lt.addLast(restantes_origen, i + '/' + str(distance_origen))
+        elif distance_origen <= 30 and distance_destino > 30:
+            lt.addLast(list_origen_posible, i + '/' + str(distance_origen))
+            lt.addLast(restantes_destino, i + '/' + str(distance_destino))
+        else:
+            lt.addLast(restantes_origen, i + '/' + str(distance_origen))
+            lt.addLast(restantes_destino, i + '/' + str(distance_destino))
+    
+    if not lt.isEmpty(list_origen_posible) and not lt.isEmpty(list_destino_posible):
+        merg.sort(list_origen_posible, cmp_req1)
+        info_origen = lt.firstElement(list_origen_posible)
+        split_origen = info_origen.split('/')
+        punto_origen = split_origen[0]
+        distancia_origen_aeropuerto = float(split_origen[1])
+        
+        merg.sort(list_destino_posible, cmp_req1)
+        info_destino = lt.firstElement(list_destino_posible)
+        split_destino = info_destino.split('/')
+        punto_destino = split_destino[0]
+        distancia_aeropuerto_destino = float(split_destino[1])
+        
+        mst = prim.PrimMST(grafo_tiempo, punto_origen)
+        
+        # Construir el MST en forma de grafo para facilitar la búsqueda
+        mst_graph = gr.newGraph(datastructure='ADJ_LIST',
+                                directed=True,
+                                size=1000)
+        
+        for edge in lt.iterator(prim.edgesMST(grafo_tiempo, mst)['mst']):
+            gr.insertVertex(mst_graph, edge['vertexA'])
+            gr.insertVertex(mst_graph, edge['vertexB'])
+            gr.addEdge(mst_graph, edge['vertexA'], edge['vertexB'], edge['weight'])
+        
+        # Ejecutar DFS en el MST para encontrar el camino entre punto_origen y punto_destino
+        search = dfs.DepthFirstSearch(mst_graph, punto_origen)
+        
+        if dfs.hasPathTo(search, punto_destino):
+            camino = dfs.pathTo(search, punto_destino)
+            lista_recorrido = lt.newList('ARRAY_LIST')
+            while not st.isEmpty(camino):
+                vertice = st.pop(camino)
+                lt.addLast(lista_recorrido, vertice)
+            
+            distancia_total = 0
+            tiempo_total = 0
+            for i in range(1, lt.size(lista_recorrido)):
+                vertice1 = lt.getElement(lista_recorrido, i)
+                vertice2 = lt.getElement(lista_recorrido, i + 1)
+                arcod = gr.getEdge(grafo_distancia, vertice1, vertice2)
+                distancia_total += float(arcod['weight'])
+                arcot = gr.getEdge(grafo_tiempo, vertice1, vertice2)
+                tiempo_total += int(arcot['weight'])
+                
+            distancia_total += distancia_origen_aeropuerto
+            distancia_total += distancia_aeropuerto_destino
+            
+            num_aeropuertos_visitados = lt.size(lista_recorrido)
+            lista_camino_encontrado = lt.newList('ARRAY_LIST')
+            for n in lt.iterator(lista_recorrido):
+                info_vertice = mp.get(mapa_aeropuertos, n)
+                valor_vertice = me.getValue(info_vertice)
+                lt.addLast(lista_camino_encontrado, valor_vertice)
+            
+            punto_cercano_d = None
+            punto_cercano_o = None
+        else:
+            lista_camino_encontrado = None
+            distancia_total = None
+            tiempo_total = None
+            merg.sort(restantes_origen, cmp_req1)
+            merg.sort(restantes_destino, cmp_req1)
+            punto_cercano_o = lt.firstElement(restantes_origen)
+            punto_cercano_d = lt.firstElement(restantes_destino)
+    else:
+        lista_camino_encontrado = None
+        distancia_total = None
+        tiempo_total = None
+        merg.sort(restantes_origen, cmp_req1)
+        merg.sort(restantes_destino, cmp_req1)
+        punto_cercano_o = lt.firstElement(restantes_origen)
+        punto_cercano_d = lt.firstElement(restantes_destino)
+    
+    return lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d
+
+
+    
+
 
 
 def req_8(data_structs):
