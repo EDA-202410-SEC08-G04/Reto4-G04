@@ -645,12 +645,22 @@ def req_4(analyzer, tipo):
 def req4_2(analyzer):
     return analyzer['aeropuertos_mapa']
 
+def comparacion_arbol(aero1, aero2):
+    #ordena de mayor a menor
+    concurrencia1, icao1 = aero1
+    concurrencia2, icao2 = aero2
+    if concurrencia1 > concurrencia2:
+        return 1
+    elif concurrencia1 < concurrencia2:
+        return -1
+    else:
+        if icao1 < icao2:
+            return 1
+        elif icao1 > icao2:
+            return -1
+        else:
+            return 0
                 
-              
-
-
-    
-    
 def req_5(data_structs):
     """
     Función que soluciona el requerimiento 5
