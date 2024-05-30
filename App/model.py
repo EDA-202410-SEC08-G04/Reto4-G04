@@ -745,9 +745,7 @@ def req_6(data_structs, M_aeropuertos):
     contador=0
     lista=lt.newList('ARRAY_LIST')
     
-
     vertices = gr.vertices(grafo_comercial_dis)
-    
     
     for vertice in lt.iterator(vertices):
             concurrencia = gr.degree(grafo_comercial_dis, vertice)
@@ -839,18 +837,13 @@ def req_6(data_structs, M_aeropuertos):
         for mini_lista in lt.iterator(segunda_lista):
             lt.addLast(lista_dentro,mini_lista)
             dic={codigo['Numero de camino']:lista_dentro}
-            
-            lt.addLast(lista_rta,dic)
+            #print ("dic: ", dic)
+        lt.addLast(lista_rta,dic)
     
     
             
-        
-            
-       
-           
                 
-                
-    print(lista_rta)    
+    print("Lista respuesta: ", lista_rta)    
     print(lista_distancia)
     
     
@@ -861,7 +854,7 @@ def req_6(data_structs, M_aeropuertos):
  
     
     
-    return info_aer_mayor, lista_rta
+    #return info_aer_mayor, lista_rta
 
 
 def req_7(data_structs):
