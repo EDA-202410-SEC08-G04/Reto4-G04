@@ -134,8 +134,11 @@ def req_6(control):
 
 
 def req_7(analyzer, lat1, lon1, lat2, lon2):
+    tiempo_inicial = time.time()
     lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d= model.req_7(analyzer, lat1, lon1, lat2, lon2)
-    return lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d
+    tiempo_final = time.time()
+    tiempo = (tiempo_final - tiempo_inicial)*1000
+    return lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d, tiempo
 
 def req_8(control):
     """
