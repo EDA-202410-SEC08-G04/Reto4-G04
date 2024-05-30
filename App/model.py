@@ -437,20 +437,24 @@ def req_4(analyzer, tipo):
     Función que soluciona el requerimiento 4
     """
     # TODO: Realizar el requerimiento 4
-    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar=reporte_de_Carga(analyzer)
-    grafo_carga_distancia=analyzer['aviacion_carga_distancia']
-    grafo_carga_tiempo=analyzer['aviacion_carga_tiempo']
-    mapa_aeropuertos= analyzer['aeropuertos_mapa']
-    mapa_vuelos= analyzer['vuelos']
-    carga_ultimo= listas_carga[1]
-    aeropuerto_importante= lt.lastElement(carga_ultimo)['ICAO']
-    nombre_aero_imp= me.getValue(mp.get(mapa_aeropuertos, aeropuerto_importante))['NOMBRE']
-    sort_grafo_distancia= prim.PrimMST(grafo_carga_distancia, aeropuerto_importante)
-    sort_grafo_tiempo= prim.PrimMST(grafo_carga_tiempo, aeropuerto_importante)
-    lista_recorrido=lt.newList('ARRAY_LIST')
-    distancia_total= 0
-    tiempo_total=0
+    total_aeropuertos_cargados, total_vuelos_cargados, listas_comercial, listas_carga, listas_militar = reporte_de_Carga(analyzer)
+    grafo_carga_distancia = analyzer['aviacion_carga_distancia']
+    grafo_carga_tiempo = analyzer['aviacion_carga_tiempo']
+    mapa_aeropuertos = analyzer['aeropuertos_mapa']
+    mapa_vuelos = analyzer['vuelos']
+    carga_ultimo = listas_carga[1]
+    aeropuerto_importante = lt.lastElement(carga_ultimo)['ICAO']
+    nombre_aero_imp = me.getValue(mp.get(mapa_aeropuertos, aeropuerto_importante))['NOMBRE']
+    
+    # Generar MST utilizando Prim
+    sort_grafo_distancia = prim.PrimMST(grafo_carga_distancia, aeropuerto_importante)
+    sort_grafo_tiempo = prim.PrimMST(grafo_carga_tiempo, aeropuerto_importante)
+    
+    lista_recorrido = lt.newList('ARRAY_LIST')
+    distancia_total = 0
+    tiempo_total = 0
 
+    # Realizar DFS desde el aeropuerto de importancia para verificar conectividad
     search = dfs.DepthFirstSearch(grafo_carga_distancia, aeropuerto_importante)
     num_trayectos = 0
     for vertice in lt.iterator(gr.vertices(grafo_carga_distancia)):
@@ -459,92 +463,102 @@ def req_4(analyzer, tipo):
             while not st.isEmpty(path):
                 st.pop(path)
                 num_trayectos += 1
-                
+    
+    # Recorrer el MST de tiempos para calcular el tiempo total
     for n in lt.iterator(prim.edgesMST(grafo_carga_tiempo, sort_grafo_tiempo)['mst']):
         for clave, valor in n.items():
-            if clave=='weight':
-                tiempo_total+=int(valor)
-                
+            if clave == 'weight':
+                tiempo_total += int(valor)
+    
+    # Recorrer el MST de distancias para calcular la distancia total y formar la lista de recorrido
     for n in lt.iterator(prim.edgesMST(grafo_carga_distancia, sort_grafo_distancia)['mst']):
-        if tipo=='Si':
-            n['Origen']=n['vertexA']
+        if tipo == 'Si':
+            n['Origen'] = n['vertexA']
             del n['vertexA']
-            n['Destino']=n['vertexB']
+            n['Destino'] = n['vertexB']
             del n['vertexB']
-            n['Distancia recorrida en el trayecto']= n['weight']
+            n['Distancia recorrida en el trayecto'] = n['weight']
             del n['weight']
-            id_mapa_vuelos= n['Origen'] + '/' + n['Destino']
-            info_vuelo= mp.get(mapa_vuelos, id_mapa_vuelos)
-            valor_vuelo= me.getValue(info_vuelo)
-            n['El tipo de aeronave es:']= valor_vuelo['TIPO_AERONAVE']
-            n['El tiempo del trayecto es:']= str(valor_vuelo['TIEMPO_VUELO']) + 'minutos'
+            id_mapa_vuelos = n['Origen'] + '/' + n['Destino']
+            info_vuelo = mp.get(mapa_vuelos, id_mapa_vuelos)
+            valor_vuelo = me.getValue(info_vuelo)
+            n['El tipo de aeronave es:'] = valor_vuelo['TIPO_AERONAVE']
+            n['El tiempo del trayecto es:'] = str(valor_vuelo['TIEMPO_VUELO']) + ' minutos'
             for clave, valor in n.items():
-                if clave=='Origen':
-                    pareja= mp.get(mapa_aeropuertos, valor)
-                    valor= me.getValue(pareja)
-                    icao=valor['ICAO']
-                    nombre=valor['NOMBRE']
-                    ciudad=valor['CIUDAD']
-                    pais=valor['PAIS']
-                    n['Origen']= [('El aeropuerto de origen es'+ nombre + ', y su identificador es' + icao),
-                                ('Su pais y su ciuda son' + pais + ' y ' + ciudad)]
-                elif clave=='Destino':
-                    pareja= mp.get(mapa_aeropuertos, valor)
-                    valor= me.getValue(pareja)
-                    icao=valor['ICAO']
-                    nombre=valor['NOMBRE']
-                    ciudad=valor['CIUDAD']
-                    pais=valor['PAIS']
-                    n['Destino']= [('El aeropuerto de destino es'+ nombre + ', y su identificador es' + icao),
-                                ('Su pais y su ciudad son' + pais + ' y ' + ciudad)]
-                if clave=='Distancia recorrida en el trayecto':
-                    distancia_total+=int(valor)
+                if clave == 'Origen':
+                    pareja = mp.get(mapa_aeropuertos, valor)
+                    valor = me.getValue(pareja)
+                    icao = valor['ICAO']
+                    nombre = valor['NOMBRE']
+                    ciudad = valor['CIUDAD']
+                    pais = valor['PAIS']
+                    n['Origen'] = [('El aeropuerto de origen es ' + nombre + ', y su identificador es ' + icao),
+                                   ('Su país y su ciudad son ' + pais + ' y ' + ciudad)]
+                elif clave == 'Destino':
+                    pareja = mp.get(mapa_aeropuertos, valor)
+                    valor = me.getValue(pareja)
+                    icao = valor['ICAO']
+                    nombre = valor['NOMBRE']
+                    ciudad = valor['CIUDAD']
+                    pais = valor['PAIS']
+                    n['Destino'] = [('El aeropuerto de destino es ' + nombre + ', y su identificador es ' + icao),
+                                    ('Su país y su ciudad son ' + pais + ' y ' + ciudad)]
+                if clave == 'Distancia recorrida en el trayecto':
+                    distancia_total += int(valor)
             lt.addLast(lista_recorrido, n)
-             
         else:
             lt.addLast(lista_recorrido, n)
             for clave, valor in n.items():
-                if clave=='weight':
-                    distancia_total+=int(valor)
+                if clave == 'weight':
+                    distancia_total += int(valor)
 
-            
-    if tipo=='No':       
-        aeropuerto_origen= lt.firstElement(lista_recorrido)
-        aeropuerto_destino= lt.lastElement(lista_recorrido)
+    aeropuerto_origen = lt.firstElement(lista_recorrido)
+    pos_importante = 1  
+
+  
+    for i in range(1, lt.size(lista_recorrido) + 1):
+        elemento = lt.getElement(lista_recorrido, i)
+        if 'Origen' in elemento and elemento['Origen'][0].endswith(aeropuerto_importante):
+            pos_importante = i
+
+    if pos_importante != 1:
+        lt.exchange(lista_recorrido, 1, pos_importante)
+
+    if tipo == 'No':
+        aeropuerto_origen = lt.firstElement(lista_recorrido)
+        aeropuerto_destino = lt.lastElement(lista_recorrido)
         lt.removeFirst(lista_recorrido)
         lt.removeLast(lista_recorrido)
         
-        aeropuerto_origen['Origen']= aeropuerto_origen['vertexA']
+        aeropuerto_origen['Origen'] = aeropuerto_origen['vertexA']
         del aeropuerto_origen['vertexA']
-        aeropuerto_destino['Destino']= aeropuerto_destino['vertexB']
+        aeropuerto_destino['Destino'] = aeropuerto_destino['vertexB']
         del aeropuerto_destino['vertexB']
         
-        info_origen= mp.get(mapa_aeropuertos, aeropuerto_origen['Origen'])
-        valor_origen= me.getValue(info_origen)
-        info_destino= mp.get(mapa_aeropuertos, aeropuerto_destino['Destino'])
-        valor_destino= me.getValue(info_destino)
+        info_origen = mp.get(mapa_aeropuertos, aeropuerto_origen['Origen'])
+        valor_origen = me.getValue(info_origen)
+        info_destino = mp.get(mapa_aeropuertos, aeropuerto_destino['Destino'])
+        valor_destino = me.getValue(info_destino)
         
-        id_origen= valor_origen['ICAO']
-        nombre_origen= valor_origen['NOMBRE']
-        ciudad_origen= valor_origen['CIUDAD']
-        pais_origen= valor_origen['PAIS']
+        id_origen = valor_origen['ICAO']
+        nombre_origen = valor_origen['NOMBRE']
+        ciudad_origen = valor_origen['CIUDAD']
+        pais_origen = valor_origen['PAIS']
         
-        id_destino= valor_destino['ICAO']
-        nombre_destino= valor_destino['NOMBRE']
-        ciudad_destino= valor_destino['CIUDAD']
-        pais_destino= valor_destino['PAIS']
+        id_destino = valor_destino['ICAO']
+        nombre_destino = valor_destino['NOMBRE']
+        ciudad_destino = valor_destino['CIUDAD']
+        pais_destino = valor_destino['PAIS']
         
-        aeropuerto_origen['Origen']= [('El nombre del aeropeurto de origen es' + nombre_origen + ' y su id es' + id_origen),
-                                      ('Su pais y ciudad son' + pais_origen + ' y ' + ciudad_origen)]
+        aeropuerto_origen['Origen'] = [('El nombre del aeropuerto de origen es ' + nombre_origen + ' y su ID es ' + id_origen),
+                                      ('Su país y ciudad son ' + pais_origen + ' y ' + ciudad_origen)]
         
-        aeropuerto_destino['Destino']= [('El nombre del aeropeurto de destino es' + nombre_destino + ' y su id es' + id_destino),
-                                      ('Su pais y ciudad son' + pais_destino + ' y ' + ciudad_destino)]
+        aeropuerto_destino['Destino'] = [('El nombre del aeropuerto de destino es ' + nombre_destino + ' y su ID es ' + id_destino),
+                                         ('Su país y ciudad son ' + pais_destino + ' y ' + ciudad_destino)]
         lt.addFirst(lista_recorrido, aeropuerto_origen)
         lt.addLast(lista_recorrido, aeropuerto_destino)
-        
 
-
-    return lista_recorrido,  distancia_total, num_trayectos, tiempo_total, nombre_aero_imp
+    return lista_recorrido, distancia_total, num_trayectos, tiempo_total, nombre_aero_imp
 
 def req4_2(analyzer):
     return analyzer['aeropuertos_mapa']
