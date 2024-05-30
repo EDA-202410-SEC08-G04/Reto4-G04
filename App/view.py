@@ -194,8 +194,9 @@ def print_req_4(control, tipo):
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
-    lista_recorrido,  distancia_total, num_trayectos, tiempo_total, nombre_aero_imp=controller.req_4(control, tipo)
+    lista_recorrido,  distancia_total, num_trayectos, tiempo_total, nombre_aero_imp, t=controller.req_4(control, tipo)
     mapa_aeropuertos= controller.req4_mapa(control)
+    print ("El tiempo que se demora el algorimo en ejecutarse es: ", t)
     if tipo== 'Si':
         print('El aeropuerto mas importante es ' + nombre_aero_imp + ' y es el primero en el trayecto')
         print('La distancia total de los trayectos es ' + str(distancia_total) )
@@ -293,7 +294,8 @@ def print_req_7(control, lat1, lon1, lat2, lon2):
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d= controller.req_7(control, lat1, lon1, lat2, lon2)
+    lista_camino_encontrado, distancia_total, tiempo_total, num_aeropuertos_visitados, punto_cercano_o, punto_cercano_d, t= controller.req_7(control, lat1, lon1, lat2, lon2)
+    print ("El tiempo que se demora el algorimo en ejecutarse es: ", t)
     if lista_camino_encontrado==None:
         print('No se enontraron aeropuertos en los rangos de búsqueda')
         print('Estas son las distancias encontradas entre los aeropuertos más cercanos del punto de origen y el punto de destino:')
